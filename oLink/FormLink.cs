@@ -413,125 +413,125 @@ aws s3 sync C:\oLink\File s3://^S3Bucket^/File --acl public-read --region eu-wes
             string sTrack = "";
             string sTrackZh = "", sTrackEn = "";
             string sTrackZhSrc = "", sTrackEnSrc = "";
-            if (track != "" && track.EndsWith(".vtt"))
-            {
-                sTrackZh = "zh";
-                sTrackZhSrc = EnUrl2(track);
-                sTrack += "\r\n<track kind=\"subtitles\" label=\"中文\" srclang=\"zh\" src=\"" + sTrackZhSrc + "\" default>";
-            }
+            //if (track != "" && track.EndsWith(".vtt"))
+            //{
+            //    sTrackZh = "zh";
+            //    sTrackZhSrc = EnUrl2(track);
+            //    sTrack += "\r\n<track kind=\"subtitles\" label=\"中文\" srclang=\"zh\" src=\"" + sTrackZhSrc + "\" default>";
+            //}
 
-            if (url.StartsWith("https://www.youtube.com/") || url.StartsWith("https://youtu.be/") || url.StartsWith("https://www.youtube.com/embed/"))
-            {
-                url = url.Replace("https://www.youtube.com/watch?v=", "").Replace("https://youtu.be/", "").Replace("https://www.youtube.com/embed/", "");
-                if (url.Length > 11) url = url.Substring(0, 11);
+            //if (url.StartsWith("https://www.youtube.com/") || url.StartsWith("https://youtu.be/") || url.StartsWith("https://www.youtube.com/embed/"))
+            //{
+            //    url = url.Replace("https://www.youtube.com/watch?v=", "").Replace("https://youtu.be/", "").Replace("https://www.youtube.com/embed/", "");
+            //    if (url.Length > 11) url = url.Substring(0, 11);
 
-                string sGetYtb = "";
-                string[] ssGetYtb = sGetYtb.Split(',');
-                string uinfo = "https://www.youtube.com/get_video_info?eurl=&sts=^sSts^&video_id=".Replace("^sSts^", ssGetYtb[0]) + url;
-                string s1 = GetHtml(uinfo, true);
-                if (s1.Contains("%22status%22%3A%22UNPLAYABLE%22")) s1 = GetHtml(uinfo + "&el=detailpage", true); // "&el=embedded", "&el=vevo", ""
-                if (s1 == "") return sNFound;
+            //    string sGetYtb = "";
+            //    string[] ssGetYtb = sGetYtb.Split(',');
+            //    string uinfo = "https://www.youtube.com/get_video_info?eurl=&sts=^sSts^&video_id=".Replace("^sSts^", ssGetYtb[0]) + url;
+            //    string s1 = GetHtml(uinfo, true);
+            //    if (s1.Contains("%22status%22%3A%22UNPLAYABLE%22")) s1 = GetHtml(uinfo + "&el=detailpage", true); // "&el=embedded", "&el=vevo", ""
+            //    if (s1 == "") return sNFound;
 
-                // Wait
-                Match mWait = new Regex("(?<=%22status%22%3A%22LIVE_STREAM_OFFLINE%22%2C%22reason%22%3A%22)([\\S\\s]*?)(?=%22)").Match(s1);
-                if (mWait.Success) return sWaited.Replace("^wait^", HttpUtility.UrlDecode(mWait.Value)
-                    + "<img class='artl' src='" + EnUrl2("https://i.ytimg.com/vi/" + url + "/maxresdefault.jpg") + "'>");
+            //    // Wait
+            //    Match mWait = new Regex("(?<=%22status%22%3A%22LIVE_STREAM_OFFLINE%22%2C%22reason%22%3A%22)([\\S\\s]*?)(?=%22)").Match(s1);
+            //    if (mWait.Success) return sWaited.Replace("^wait^", HttpUtility.UrlDecode(mWait.Value)
+            //        + "<img class='artl' src='" + EnUrl2("https://i.ytimg.com/vi/" + url + "/maxresdefault.jpg") + "'>");
 
-                // m3u8
-                Match mM3u8 = new Regex("(?<=%22hlsManifestUrl%22%3A%22)([\\S\\s]*?)(?=%22)").Match(s1);
-                if (mM3u8.Success)
-                {
-                    string sM3u8 = GetHtml(mM3u8.Value.Replace("%3A", ":").Replace("%2F", "/").Replace("%252C", ",").Replace("%253D", "="));
-                    Match mM3u8_360 = new Regex("(?<=RESOLUTION=640x[\\S\\s]*?)(https[\\S]*?)(?=\\s)").Match(sM3u8);
-                    if (!mM3u8_360.Success) return sNFound;
-                    string m3u8 = GetHtml(mM3u8_360.Value);
-                    string[] m3u8s = m3u8.Split('\n'); //Log(url + " " + m3u8s.Length+" "+ mM3u8_360.Value);
-                    if (m3u8s.Length > 100 || m3u8 == "") return sConvert;
-                    sM3u8 = "http://or9a.odisk.org/oo.aspx?name=get_m3u8&ag=" + HttpUtility.UrlEncode(mM3u8_360.Value)
-                        + "&myip=" + myip + "&type=play.m3u8";
-                    return GetM3u8Player(sM3u8);
-                }
+            //    // m3u8
+            //    Match mM3u8 = new Regex("(?<=%22hlsManifestUrl%22%3A%22)([\\S\\s]*?)(?=%22)").Match(s1);
+            //    if (mM3u8.Success)
+            //    {
+            //        string sM3u8 = GetHtml(mM3u8.Value.Replace("%3A", ":").Replace("%2F", "/").Replace("%252C", ",").Replace("%253D", "="));
+            //        Match mM3u8_360 = new Regex("(?<=RESOLUTION=640x[\\S\\s]*?)(https[\\S]*?)(?=\\s)").Match(sM3u8);
+            //        if (!mM3u8_360.Success) return sNFound;
+            //        string m3u8 = GetHtml(mM3u8_360.Value);
+            //        string[] m3u8s = m3u8.Split('\n'); //Log(url + " " + m3u8s.Length+" "+ mM3u8_360.Value);
+            //        if (m3u8s.Length > 100 || m3u8 == "") return sConvert;
+            //        sM3u8 = "http://or9a.odisk.org/oo.aspx?name=get_m3u8&ag=" + HttpUtility.UrlEncode(mM3u8_360.Value)
+            //            + "&myip=" + myip + "&type=play.m3u8";
+            //        return GetM3u8Player(sM3u8);
+            //    }
 
-                Match mTrackList = new Regex("(?<=%22captionTracks%22%3A%5B)([\\S\\s]*?)(?=%5D)").Match(s1);
-                string sTrackList = mTrackList.Value
-                    .Replace("%3A", ":").Replace("%2F", "/").Replace("%3F", "?").Replace("%26", "&")
-                    .Replace("%3D", "=").Replace("%2C", ",").Replace("%2B", "+")
-                    .Replace("%7B", "{").Replace("%7D", "}").Replace("%22", "\"")
-                    .Replace("%252C", ",").Replace("%5C", "\\").Replace("\\u0026", "&");
-                MatchCollection mc = new Regex("\"name\":\\{([\\S\\s]*?)\\}").Matches(sTrackList);
-                foreach (Match m in mc)
-                    sTrackList = sTrackList.Replace(m.Value, m.Value.Replace("\"name\":{", "").Replace("}", ""));
-                if
-                        (sTrackList.Contains("\"vssId\":\".zh-CN\"")) sTrackZh = ".zh-CN"; // lang_code
-                else if (sTrackList.Contains("\"vssId\":\".zh\"")) sTrackZh = ".zh";
-                else if (sTrackList.Contains("\"vssId\":\".zh-Hans\"")) sTrackZh = ".zh-Hans";
-                else if (sTrackList.Contains("\"vssId\":\".zh-HK\"")) sTrackZh = ".zh-HK";
-                else if (sTrackList.Contains("\"vssId\":\".zh-TW\"")) sTrackZh = ".zh-TW";
-                else if (sTrackList.Contains("\"vssId\":\".zh-SG\"")) sTrackZh = ".zh-SG"; // 新加坡
-                else if (sTrackList.Contains("\"vssId\":\".zh-Hant\"")) sTrackZh = ".zh-Hant";
-                else if (sTrackList.Contains("\"vssId\":\".zh-Hans.GZolFkXAZLc\"")) sTrackZh = ".zh-Hans.GZolFkXAZLc";
-                else if (sTrackList.Contains("\"vssId\":\".nan-TW\"")) sTrackZh = ".nan-TW"; // Min Nan Chinese (Taiwan)
-                if
-                        (sTrackList.Contains("\"vssId\":\".en\"")) sTrackEn = ".en";
-                else if (sTrackList.Contains("\"vssId\":\".en-GB\"")) sTrackEn = ".en-GB";
-                else if (sTrackList.Contains("\"vssId\":\".en-US\"")) sTrackEn = ".en-US";
-                else if (sTrackList.Contains("\"vssId\":\"a.en\"")) sTrackEn = "a.en";
-                else if (sTrackList.Contains("\"vssId\":\"a.ja\"")) sTrackEn = "a.ja";
-                else if (sTrackList.Contains("\"vssId\":\"a.de\"")) sTrackEn = "a.de";
-                else if (sTrackList.Contains("\"vssId\":\"a.ru\"")) sTrackEn = "a.ru";
-                else if (sTrackList.Contains("\"vssId\":\"a.fr\"")) sTrackEn = "a.fr"; // 法
-                mc = new Regex("\\{([\\S\\s]*?)\\}").Matches(sTrackList);
-                if (sTrackZh != "" && sTrackZhSrc == "")
-                    foreach (Match m in mc)
-                        if (m.Value.Contains("\"vssId\":\"" + sTrackZh + "\""))
-                        {
-                            Match m2 = new Regex("(?<=\"baseUrl\":\")([\\S\\s]*?)(?=\")").Match(m.Value);
-                            sTrackZhSrc = EnUrl2(m2.Value + "&fmt=vtt&type=.vtt");
-                            sTrack += "\r\n<track kind=\"subtitles\" label=\"^origin^\" srclang=\"^code^\" src=\"^src^\" default>"
-                            .Replace("^origin^", "原始中文").Replace("^code^", sTrackZh).Replace("^src^", sTrackZhSrc);
-                        }
-                if (sTrackEn != "")
-                    foreach (Match m in mc)
-                        if (m.Value.Contains("\"vssId\":\"" + sTrackEn + "\""))
-                        {
-                            Match m2 = new Regex("(?<=\"baseUrl\":\")([\\S\\s]*?)(?=\")").Match(m.Value);
-                            if (sTrackZh == "")
-                            {
-                                sTrackZh = "zh-Hans";
-                                sTrackZhSrc = EnUrl2(m2.Value + "&fmt=vtt&tlang=zh-Hans&type=.vtt");
-                                sTrack += "\r\n<track kind=\"subtitles\" label=\"^origin^\" srclang=\"zh\" src=\"^src^\" default>"
-                                .Replace("^origin^", "自动中文").Replace("^src^", sTrackZhSrc);
-                            }
-                            sTrackEnSrc = EnUrl2(m2.Value + "&fmt=vtt&type=.vtt");
-                            sTrack += "\r\n<track kind=\"subtitles\" label=\"^origin^\" srclang=\"en\" src=\"^src^\">"
-                            .Replace("^origin^", (sTrackEn == "a.en" ? "自动外文" : "原始外文")).Replace("^src^", sTrackEnSrc);
-                        }
+            //    Match mTrackList = new Regex("(?<=%22captionTracks%22%3A%5B)([\\S\\s]*?)(?=%5D)").Match(s1);
+            //    string sTrackList = mTrackList.Value
+            //        .Replace("%3A", ":").Replace("%2F", "/").Replace("%3F", "?").Replace("%26", "&")
+            //        .Replace("%3D", "=").Replace("%2C", ",").Replace("%2B", "+")
+            //        .Replace("%7B", "{").Replace("%7D", "}").Replace("%22", "\"")
+            //        .Replace("%252C", ",").Replace("%5C", "\\").Replace("\\u0026", "&");
+            //    MatchCollection mc = new Regex("\"name\":\\{([\\S\\s]*?)\\}").Matches(sTrackList);
+            //    foreach (Match m in mc)
+            //        sTrackList = sTrackList.Replace(m.Value, m.Value.Replace("\"name\":{", "").Replace("}", ""));
+            //    if
+            //            (sTrackList.Contains("\"vssId\":\".zh-CN\"")) sTrackZh = ".zh-CN"; // lang_code
+            //    else if (sTrackList.Contains("\"vssId\":\".zh\"")) sTrackZh = ".zh";
+            //    else if (sTrackList.Contains("\"vssId\":\".zh-Hans\"")) sTrackZh = ".zh-Hans";
+            //    else if (sTrackList.Contains("\"vssId\":\".zh-HK\"")) sTrackZh = ".zh-HK";
+            //    else if (sTrackList.Contains("\"vssId\":\".zh-TW\"")) sTrackZh = ".zh-TW";
+            //    else if (sTrackList.Contains("\"vssId\":\".zh-SG\"")) sTrackZh = ".zh-SG"; // 新加坡
+            //    else if (sTrackList.Contains("\"vssId\":\".zh-Hant\"")) sTrackZh = ".zh-Hant";
+            //    else if (sTrackList.Contains("\"vssId\":\".zh-Hans.GZolFkXAZLc\"")) sTrackZh = ".zh-Hans.GZolFkXAZLc";
+            //    else if (sTrackList.Contains("\"vssId\":\".nan-TW\"")) sTrackZh = ".nan-TW"; // Min Nan Chinese (Taiwan)
+            //    if
+            //            (sTrackList.Contains("\"vssId\":\".en\"")) sTrackEn = ".en";
+            //    else if (sTrackList.Contains("\"vssId\":\".en-GB\"")) sTrackEn = ".en-GB";
+            //    else if (sTrackList.Contains("\"vssId\":\".en-US\"")) sTrackEn = ".en-US";
+            //    else if (sTrackList.Contains("\"vssId\":\"a.en\"")) sTrackEn = "a.en";
+            //    else if (sTrackList.Contains("\"vssId\":\"a.ja\"")) sTrackEn = "a.ja";
+            //    else if (sTrackList.Contains("\"vssId\":\"a.de\"")) sTrackEn = "a.de";
+            //    else if (sTrackList.Contains("\"vssId\":\"a.ru\"")) sTrackEn = "a.ru";
+            //    else if (sTrackList.Contains("\"vssId\":\"a.fr\"")) sTrackEn = "a.fr"; // 法
+            //    mc = new Regex("\\{([\\S\\s]*?)\\}").Matches(sTrackList);
+            //    if (sTrackZh != "" && sTrackZhSrc == "")
+            //        foreach (Match m in mc)
+            //            if (m.Value.Contains("\"vssId\":\"" + sTrackZh + "\""))
+            //            {
+            //                Match m2 = new Regex("(?<=\"baseUrl\":\")([\\S\\s]*?)(?=\")").Match(m.Value);
+            //                sTrackZhSrc = EnUrl2(m2.Value + "&fmt=vtt&type=.vtt");
+            //                sTrack += "\r\n<track kind=\"subtitles\" label=\"^origin^\" srclang=\"^code^\" src=\"^src^\" default>"
+            //                .Replace("^origin^", "原始中文").Replace("^code^", sTrackZh).Replace("^src^", sTrackZhSrc);
+            //            }
+            //    if (sTrackEn != "")
+            //        foreach (Match m in mc)
+            //            if (m.Value.Contains("\"vssId\":\"" + sTrackEn + "\""))
+            //            {
+            //                Match m2 = new Regex("(?<=\"baseUrl\":\")([\\S\\s]*?)(?=\")").Match(m.Value);
+            //                if (sTrackZh == "")
+            //                {
+            //                    sTrackZh = "zh-Hans";
+            //                    sTrackZhSrc = EnUrl2(m2.Value + "&fmt=vtt&tlang=zh-Hans&type=.vtt");
+            //                    sTrack += "\r\n<track kind=\"subtitles\" label=\"^origin^\" srclang=\"zh\" src=\"^src^\" default>"
+            //                    .Replace("^origin^", "自动中文").Replace("^src^", sTrackZhSrc);
+            //                }
+            //                sTrackEnSrc = EnUrl2(m2.Value + "&fmt=vtt&type=.vtt");
+            //                sTrack += "\r\n<track kind=\"subtitles\" label=\"^origin^\" srclang=\"en\" src=\"^src^\">"
+            //                .Replace("^origin^", (sTrackEn == "a.en" ? "自动外文" : "原始外文")).Replace("^src^", sTrackEnSrc);
+            //            }
 
-                // video & audio
-                Match m1 = new Regex("(?<=%22formats%22%3A%5B)([\\S]*?)(?=%5D)").Match(s1);
-                if (!m1.Success) return sNFound;
-                string s2 = m1.Value
-                    .Replace("%3A", ":").Replace("%2F", "/").Replace("%3F", "?").Replace("%26", "&")
-                    .Replace("%3D", "=").Replace("%2C", ",").Replace("%2B", "+")
-                    .Replace("%7B", "{").Replace("%7D", "}").Replace("%22", "\"");
-                string[] ss1 = s2.Split(new string[] { "},{" }, StringSplitOptions.RemoveEmptyEntries);
-                foreach (string s in ss1) if (s.Contains("\"itag\":22")) { sVideoV = GetYoutube(s); break; }
-                foreach (string s in ss1) if (s.Contains("\"itag\":18")) { sVideoM = GetYoutube(s); break; }
-                foreach (string s in ss1) if (s.Contains("\"itag\":45")) { sVideoV2 = GetYoutube(s); break; }
-                foreach (string s in ss1) if (s.Contains("\"itag\":43")) { sVideoM2 = GetYoutube(s); break; }
-                m1 = new Regex("(?<=%22adaptiveFormats%22%3A%5B)([\\S]*?)(?=%5D)").Match(s1);
-                s2 = m1.Value
-                    .Replace("%3A", ":").Replace("%2F", "/").Replace("%3F", "?").Replace("%26", "&")
-                    .Replace("%3D", "=").Replace("%2C", ",").Replace("%2B", "+")
-                    .Replace("%7B", "{").Replace("%7D", "}").Replace("%22", "\"");
-                ss1 = s2.Split(new string[] { "},{" }, StringSplitOptions.RemoveEmptyEntries);
-                foreach (string s in ss1) if (s.Contains("\"itag\":140")) { sAudio140 = GetYoutube(s); break; }
-                foreach (string s in ss1) if (s.Contains("\"itag\":171")) { sAudio171 = GetYoutube(s); break; }
-                foreach (string s in ss1) if (s.Contains("\"itag\":249")) { sAudio249 = GetYoutube(s); break; }
-                foreach (string s in ss1) if (s.Contains("\"itag\":250")) { sAudio250 = GetYoutube(s); break; }
-                foreach (string s in ss1) if (s.Contains("\"itag\":251")) { sAudio251 = GetYoutube(s); break; }
-                url = EnUrl2(sVideoM);
-            }
+            //    // video & audio
+            //    Match m1 = new Regex("(?<=%22formats%22%3A%5B)([\\S]*?)(?=%5D)").Match(s1);
+            //    if (!m1.Success) return sNFound;
+            //    string s2 = m1.Value
+            //        .Replace("%3A", ":").Replace("%2F", "/").Replace("%3F", "?").Replace("%26", "&")
+            //        .Replace("%3D", "=").Replace("%2C", ",").Replace("%2B", "+")
+            //        .Replace("%7B", "{").Replace("%7D", "}").Replace("%22", "\"");
+            //    string[] ss1 = s2.Split(new string[] { "},{" }, StringSplitOptions.RemoveEmptyEntries);
+            //    foreach (string s in ss1) if (s.Contains("\"itag\":22")) { sVideoV = GetYoutube(s); break; }
+            //    foreach (string s in ss1) if (s.Contains("\"itag\":18")) { sVideoM = GetYoutube(s); break; }
+            //    foreach (string s in ss1) if (s.Contains("\"itag\":45")) { sVideoV2 = GetYoutube(s); break; }
+            //    foreach (string s in ss1) if (s.Contains("\"itag\":43")) { sVideoM2 = GetYoutube(s); break; }
+            //    m1 = new Regex("(?<=%22adaptiveFormats%22%3A%5B)([\\S]*?)(?=%5D)").Match(s1);
+            //    s2 = m1.Value
+            //        .Replace("%3A", ":").Replace("%2F", "/").Replace("%3F", "?").Replace("%26", "&")
+            //        .Replace("%3D", "=").Replace("%2C", ",").Replace("%2B", "+")
+            //        .Replace("%7B", "{").Replace("%7D", "}").Replace("%22", "\"");
+            //    ss1 = s2.Split(new string[] { "},{" }, StringSplitOptions.RemoveEmptyEntries);
+            //    foreach (string s in ss1) if (s.Contains("\"itag\":140")) { sAudio140 = GetYoutube(s); break; }
+            //    foreach (string s in ss1) if (s.Contains("\"itag\":171")) { sAudio171 = GetYoutube(s); break; }
+            //    foreach (string s in ss1) if (s.Contains("\"itag\":249")) { sAudio249 = GetYoutube(s); break; }
+            //    foreach (string s in ss1) if (s.Contains("\"itag\":250")) { sAudio250 = GetYoutube(s); break; }
+            //    foreach (string s in ss1) if (s.Contains("\"itag\":251")) { sAudio251 = GetYoutube(s); break; }
+            //    url = EnUrl2(sVideoM);
+            //}
 
             url = GetEnUrl(url);
             string id = GetRandomNum();
@@ -680,16 +680,16 @@ aws s3 sync C:\oLink\File s3://^S3Bucket^/File --acl public-read --region eu-wes
             .Replace("^poster^", (cover != "" ? "poster=\"" + cover + "\"" : ""));
         }
 
-        private static string GetSoundPlayer(string url, string cover = "")
-        {
-            url = EnUrl2(url);
-            return @"
-    <video controls ^autoplay^ preload=""auto"" crossorigin=""anonymous"" style=""width:100%; height:180px; background:#faf2e1;""
-        src=""^src^"" ^poster^>
-    </video>"
-            .Replace("^autoplay^", (cover != "" ? "" : "")).Replace("^src^", GetHtmlParam(url)) /// autoplay
-            .Replace("^poster^", (cover != "" ? "poster='" + GetHtmlParam(cover) + "'" : ""));
-        }
+    //    private static string GetSoundPlayer(string url, string cover = "")
+    //    {
+    //        url = EnUrl2(url);
+    //        return @"
+    //<video controls ^autoplay^ preload=""auto"" crossorigin=""anonymous"" style=""width:100%; height:180px; background:#faf2e1;""
+    //    src=""^src^"" ^poster^>
+    //</video>"
+    //        .Replace("^autoplay^", (cover != "" ? "" : "")).Replace("^src^", GetHtmlParam(url)) /// autoplay
+    //        .Replace("^poster^", (cover != "" ? "poster='" + GetHtmlParam(cover) + "'" : ""));
+    //    }
 
         private static string GetM3u8Player(string url)
         {
@@ -700,19 +700,19 @@ aws s3 sync C:\oLink\File s3://^S3Bucket^/File --acl public-read --region eu-wes
     </video>".Replace("@id", GetRandomNum()).Replace("@src", url); /// no poster= poster=""""
         }
 
-        private static string GetFlashPlayer(string url)
-        {
-            url = EnUrl2(url);
-            return @"
-<link rel=""stylesheet"" href=""/src/functional.css"">
-<style> .flowplayer {background-color:#ffffd0;} </style>
-<script src=""/src/flowplayer.min.js""></script>
-<div class=""flowplayer"">
-    <video>
-        <source type=""video/flash"" src=""@src"">
-    </video>
-</div>".Replace("@src", GetHtmlParam(url));
-        }
+//        private static string GetFlashPlayer(string url)
+//        {
+//            url = EnUrl2(url);
+//            return @"
+//<link rel=""stylesheet"" href=""/src/functional.css"">
+//<style> .flowplayer {background-color:#ffffd0;} </style>
+//<script src=""/src/flowplayer.min.js""></script>
+//<div class=""flowplayer"">
+//    <video>
+//        <source type=""video/flash"" src=""@src"">
+//    </video>
+//</div>".Replace("@src", GetHtmlParam(url));
+//        }
 
         private static string GetImagePlayerTop(string url)
         {
@@ -728,47 +728,47 @@ aws s3 sync C:\oLink\File s3://^S3Bucket^/File --acl public-read --region eu-wes
             .Replace("^url^", url);
         }
 
-        private static string GetImagePlayer(string url)
-        {
-            url = EnUrl2(url);
-            return @"<div class='videocontainer' style='max-width:580px; margin:6px auto;'>
-    <img style='width:100%;' src='^url^'/>
-    <div class=""navv""><div class=""nav"" style=""width:100%; height:28px; position:absolute; top:0;"">
-        <ul class=""nav__menu"" style=""text-align:right;"">
-            <li class=""nav__menu-item""><a href=""javascript:void(0);"" onclick=""javascript:Save('^url^');"">下载</a></li>
-        </ul>
-    </div></div>
-</div>"
-            .Replace("^url^", GetHtmlParam(url));
-        }
+//        private static string GetImagePlayer(string url)
+//        {
+//            url = EnUrl2(url);
+//            return @"<div class='videocontainer' style='max-width:580px; margin:6px auto;'>
+//    <img style='width:100%;' src='^url^'/>
+//    <div class=""navv""><div class=""nav"" style=""width:100%; height:28px; position:absolute; top:0;"">
+//        <ul class=""nav__menu"" style=""text-align:right;"">
+//            <li class=""nav__menu-item""><a href=""javascript:void(0);"" onclick=""javascript:Save('^url^');"">下载</a></li>
+//        </ul>
+//    </div></div>
+//</div>"
+//            .Replace("^url^", GetHtmlParam(url));
+//        }
 
-        private static string GetDownloadPlayer(string url)
-        {
-            url = EnUrl2(url);
-            return "\r\n  <div class='buttoncontainer'><a href='javascript:void(0);' onclick=\"javascript:Save('"
-                + GetHtmlParam(url) + "');\"><div class='button'>点击下载</div></a></div><div class='lisw'></div>";
-        }
+        //private static string GetDownloadPlayer(string url)
+        //{
+        //    url = EnUrl2(url);
+        //    return "\r\n  <div class='buttoncontainer'><a href='javascript:void(0);' onclick=\"javascript:Save('"
+        //        + GetHtmlParam(url) + "');\"><div class='button'>点击下载</div></a></div><div class='lisw'></div>";
+        //}
 
-        private static string GetTwitter(string co, string cover, string title)
-        {
-            string r = "";
-            try
-            {
-                string[] ss = co.Split(new string[] { "[分隔[时间]分隔]" }, StringSplitOptions.RemoveEmptyEntries);
-                foreach (string s in ss)
-                {
-                    string[] ss2 = s.Split(new string[] { "[分隔[推文]分隔]" }, StringSplitOptions.None);
-                    r +=
-                      "\r\n    <div class='lisu'>"
-                    + "\r\n      <div class='picv'><img class='imgh' src='" + cover + "'></div>"
-                    + "\r\n      <div class='artv'><p class='namv'>" + "<font class='count'>" + title + " " + ss2[0] + "</font></p>"
-                    + "\r\n      </div>"
-                    + "\r\n    </div>";
-                }
-            }
-            catch (Exception ex) { Log(MethodBase.GetCurrentMethod().Name, ex.Message); }
-            return r;
-        }
+        //private static string GetTwitter(string co, string cover, string title)
+        //{
+        //    string r = "";
+        //    try
+        //    {
+        //        string[] ss = co.Split(new string[] { "[分隔[时间]分隔]" }, StringSplitOptions.RemoveEmptyEntries);
+        //        foreach (string s in ss)
+        //        {
+        //            string[] ss2 = s.Split(new string[] { "[分隔[推文]分隔]" }, StringSplitOptions.None);
+        //            r +=
+        //              "\r\n    <div class='lisu'>"
+        //            + "\r\n      <div class='picv'><img class='imgh' src='" + cover + "'></div>"
+        //            + "\r\n      <div class='artv'><p class='namv'>" + "<font class='count'>" + title + " " + ss2[0] + "</font></p>"
+        //            + "\r\n      </div>"
+        //            + "\r\n    </div>";
+        //        }
+        //    }
+        //    catch (Exception ex) { Log(MethodBase.GetCurrentMethod().Name, ex.Message); }
+        //    return r;
+        //}
 
         private static string GetEnUrl(string url)
         {
@@ -1249,110 +1249,110 @@ aws s3 sync C:\oLink\File s3://^S3Bucket^/File --acl public-read --region eu-wes
             return password;
         }
 
-        private static string GetTxt部分(string s摘要, string s链接, int i长度)
-        {
-            if (s摘要.Length > i长度)
-            {
-                string s = "";
-                string[] ss = s摘要.Replace("\r\n", "\n").Replace("\r", "\n").Split('\n');
-                for (int i1 = 0; i1 < ss.Length; i1++)
-                    if (s.Length + ss[i1].Length <= i长度 && !ss[i1].StartsWith("#{"))
-                        s += (s == "" ? "" : "\n") + ss[i1];
-                    else break;
-                s摘要 = s + "\n[链接[" + s链接 + "[链接][语言[全文]语言]]链接]";
-            }
-            return s摘要;
-        }
+        //private static string GetTxt部分(string s摘要, string s链接, int i长度)
+        //{
+        //    if (s摘要.Length > i长度)
+        //    {
+        //        string s = "";
+        //        string[] ss = s摘要.Replace("\r\n", "\n").Replace("\r", "\n").Split('\n');
+        //        for (int i1 = 0; i1 < ss.Length; i1++)
+        //            if (s.Length + ss[i1].Length <= i长度 && !ss[i1].StartsWith("#{"))
+        //                s += (s == "" ? "" : "\n") + ss[i1];
+        //            else break;
+        //        s摘要 = s + "\n[链接[" + s链接 + "[链接][语言[全文]语言]]链接]";
+        //    }
+        //    return s摘要;
+        //}
 
-        private static string GetString千万(string page)
-        {
-            if (page.Length >= 5) return page.Substring(0, page.Length - 4) + "万";
-            else if (page.Length >= 4) return page.Substring(0, page.Length - 3) + "千";
-            else return page;
-        }
+        //private static string GetString千万(string page)
+        //{
+        //    if (page.Length >= 5) return page.Substring(0, page.Length - 4) + "万";
+        //    else if (page.Length >= 4) return page.Substring(0, page.Length - 3) + "千";
+        //    else return page;
+        //}
 
-        private static string GetString最长(string sIn, int iLen)
-        {
-            if (sIn.Length <= iLen) return sIn;
-            return sIn.Substring(0, iLen - 1) + "…";
-        }
+        //private static string GetString最长(string sIn, int iLen)
+        //{
+        //    if (sIn.Length <= iLen) return sIn;
+        //    return sIn.Substring(0, iLen - 1) + "…";
+        //}
 
-        private static string Get一行(string sIn)
-        {
-            return Get换行(sIn).Replace("\n", " ");
-        }
+        //private static string Get一行(string sIn)
+        //{
+        //    return Get换行(sIn).Replace("\n", " ");
+        //}
 
         private static string Get换行(string sIn)
         {
             return sIn.Replace("\r\n", "\n").Replace("\r", "\n");
         }
 
-        private static string Get时距Param(DateTime dt)
-        {
-            TimeSpan tsNow = DateTime.Now - dt;
-            if (tsNow.TotalMinutes < 1.0) return "[语言[刚刚]语言]";
-            if (tsNow.TotalHours < 1.0) return Math.Floor(tsNow.TotalMinutes) + "[语言[分前]语言]";
-            if (tsNow.TotalDays < 1.0) return Math.Floor(tsNow.TotalHours) + "[语言[时前]语言]";
-            return Math.Floor(tsNow.TotalDays) + "[语言[天前]语言]";
-        }
+        //private static string Get时距Param(DateTime dt)
+        //{
+        //    TimeSpan tsNow = DateTime.Now - dt;
+        //    if (tsNow.TotalMinutes < 1.0) return "[语言[刚刚]语言]";
+        //    if (tsNow.TotalHours < 1.0) return Math.Floor(tsNow.TotalMinutes) + "[语言[分前]语言]";
+        //    if (tsNow.TotalDays < 1.0) return Math.Floor(tsNow.TotalHours) + "[语言[时前]语言]";
+        //    return Math.Floor(tsNow.TotalDays) + "[语言[天前]语言]";
+        //}
 
-        private static string GetPict中(string sPict)
-        {
-            return GetHtmlParam(sPict.Trim()).Replace("#P ", "").Replace(".jpg", "").Replace(".jpeg", "").Replace(".png", "") + ".M.jpg";
-        }
+        //private static string GetPict中(string sPict)
+        //{
+        //    return GetHtmlParam(sPict.Trim()).Replace("#P ", "").Replace(".jpg", "").Replace(".jpeg", "").Replace(".png", "") + ".M.jpg";
+        //}
 
-        private static string GetPictParam(string sPict, string sNumb)
-        {
-            sPict = GetHtmlParam(sPict.Trim());
-            if (sPict != "")
-                return "><img class='imgh' src='" + EnUrl2(sPict.Replace("#P ", "").Replace(".jpg", "").Replace(".jpeg", "").Replace(".png", "")
-                    + ".K.jpg", true) + "'/>";
-            else return " style='background:hsla(" + int.Parse(sNumb) % 360 + ",75%,50%,0.5)'>";
-        }
+        //private static string GetPictParam(string sPict, string sNumb)
+        //{
+        //    sPict = GetHtmlParam(sPict.Trim());
+        //    if (sPict != "")
+        //        return "><img class='imgh' src='" + EnUrl2(sPict.Replace("#P ", "").Replace(".jpg", "").Replace(".jpeg", "").Replace(".png", "")
+        //            + ".K.jpg", true) + "'/>";
+        //    else return " style='background:hsla(" + int.Parse(sNumb) % 360 + ",75%,50%,0.5)'>";
+        //}
 
-        private static string Get时间(string s)
-        {
-            string r = "";
-            try
-            {
-                r = DateTime.Parse(s).ToString("yyyy-MM-dd HH:mm");
-            }
-            catch { }
-            return r;
-        }
+        //private static string Get时间(string s)
+        //{
+        //    string r = "";
+        //    try
+        //    {
+        //        r = DateTime.Parse(s).ToString("yyyy-MM-dd HH:mm");
+        //    }
+        //    catch { }
+        //    return r;
+        //}
 
-        public static string HtmlEn(string input, string password)
-        {
-            string r = "";
-            if (input.Length == 0) return "";
-            r += string.Format("{0:x4}", ((int)input[0]));// + input.Length));
-            for (int i = 1; i < input.Length; i++) r += string.Format("{0:x4}", ((int)input[i]));// + (int)input[i - 1]);
-            return r;
-        }
+        //public static string HtmlEn(string input, string password)
+        //{
+        //    string r = "";
+        //    if (input.Length == 0) return "";
+        //    r += string.Format("{0:x4}", ((int)input[0]));// + input.Length));
+        //    for (int i = 1; i < input.Length; i++) r += string.Format("{0:x4}", ((int)input[i]));// + (int)input[i - 1]);
+        //    return r;
+        //}
 
-        public static string RSAEncrypt(string publickey, string content)
-        {
-            try
-            {
-                RSACryptoServiceProvider rsa = new RSACryptoServiceProvider();
-                rsa.FromXmlString(publickey);
-                byte[] cipherbytes = rsa.Encrypt(Encoding.UTF8.GetBytes(content), false);
-                return Convert.ToBase64String(cipherbytes);
-            }
-            catch { return ""; }
-        }
+        //public static string RSAEncrypt(string publickey, string content)
+        //{
+        //    try
+        //    {
+        //        RSACryptoServiceProvider rsa = new RSACryptoServiceProvider();
+        //        rsa.FromXmlString(publickey);
+        //        byte[] cipherbytes = rsa.Encrypt(Encoding.UTF8.GetBytes(content), false);
+        //        return Convert.ToBase64String(cipherbytes);
+        //    }
+        //    catch { return ""; }
+        //}
 
-        public static string RSADecrypt(string privatekey, string content)
-        {
-            try
-            {
-                RSACryptoServiceProvider rsa = new RSACryptoServiceProvider();
-                rsa.FromXmlString(privatekey);
-                byte[] cipherbytes = rsa.Decrypt(Convert.FromBase64String(content), false);
-                return Encoding.UTF8.GetString(cipherbytes);
-            }
-            catch { return ""; }
-        }
+        //public static string RSADecrypt(string privatekey, string content)
+        //{
+        //    try
+        //    {
+        //        RSACryptoServiceProvider rsa = new RSACryptoServiceProvider();
+        //        rsa.FromXmlString(privatekey);
+        //        byte[] cipherbytes = rsa.Decrypt(Convert.FromBase64String(content), false);
+        //        return Encoding.UTF8.GetString(cipherbytes);
+        //    }
+        //    catch { return ""; }
+        //}
 
         // Show
         private delegate void ShowMsgDelegate(string msg);
@@ -1362,10 +1362,10 @@ aws s3 sync C:\oLink\File s3://^S3Bucket^/File --acl public-read --region eu-wes
             labelMsg.Text = msg;
         }
 
-        private void ShowLabelD(string msg)
-        {
-            BeginInvoke(new ShowMsgDelegate(ShowLabel), new object[] { msg });
-        }
+        //private void ShowLabelD(string msg)
+        //{
+        //    BeginInvoke(new ShowMsgDelegate(ShowLabel), new object[] { msg });
+        //}
 
         private void ShowMsg(string msg)
         {
@@ -1391,16 +1391,16 @@ aws s3 sync C:\oLink\File s3://^S3Bucket^/File --acl public-read --region eu-wes
             BeginInvoke(new ShowMsgDelegate(ShowErr), new object[] { msg });
         }
 
-        private static void WriteMsg(string message)
-        {
-            try
-            {
-                StreamWriter swlog = File.AppendText(sAppName + "Msg.txt");
-                swlog.WriteLine("[" + DateTime.Now.ToString("yyyy-MM-dd HH:mm:ss") + "] " + message);
-                swlog.Close();
-            }
-            catch { }
-        }
+        //private static void WriteMsg(string message)
+        //{
+        //    try
+        //    {
+        //        StreamWriter swlog = File.AppendText(sAppName + "Msg.txt");
+        //        swlog.WriteLine("[" + DateTime.Now.ToString("yyyy-MM-dd HH:mm:ss") + "] " + message);
+        //        swlog.Close();
+        //    }
+        //    catch { }
+        //}
 
         private static void WriteErr(string message)
         {
@@ -1433,10 +1433,10 @@ aws s3 sync C:\oLink\File s3://^S3Bucket^/File --acl public-read --region eu-wes
             return r;
         }
 
-        public static string PostHtml(string sName, string sData)
-        {
-            return GetHtmlMethod("POST", sName, sData, "", "", "");
-        }
+        //public static string PostHtml(string sName, string sData)
+        //{
+        //    return GetHtmlMethod("POST", sName, sData, "", "", "");
+        //}
 
         public static string GetHtmlMethod(string sMethod, string sName, string sData, string sHeader, string sReferer,
             string sCode)
@@ -1504,214 +1504,214 @@ aws s3 sync C:\oLink\File s3://^S3Bucket^/File --acl public-read --region eu-wes
             return r;
         }
 
-        public static string GetHtmlMethod(string sMethod, string sName, string sData, string sHeader, string sReferer,
-            string sContentType, string sHost, string sCode)
-        {
-            string r = "";
-            HttpWebRequest request = null;
-            HttpWebResponse response = null;
-            Stream requestStream = null;
-            Stream responseStream = null;
-            StreamReader streamReader = null;
-            try
-            {
-                request = (HttpWebRequest)WebRequest.Create(sName);
-                request.UserAgent = sUserAgent;
-                if (sReferer != "") request.Referer = sReferer;
-                if (sHost != "") request.Host = sHost;
-                if (sContentType != "") request.ContentType = sContentType;
-                else if (sMethod == "POST") request.ContentType = "application/x-www-form-urlencoded";
-                request.Method = sMethod;
-                if (sHeader != "")
-                {
-                    string[] ss0 = sHeader.Split(',');
-                    foreach (string s in ss0)
-                    {
-                        string s0 = s.Substring(0, s.IndexOf(':'));
-                        string s1 = s.Substring(s.IndexOf(':') + 1);
-                        request.Headers[s0.Trim()] = s1.Trim();
-                    }
-                }
-                if (sData != "")
-                {
-                    byte[] postData = Encoding.UTF8.GetBytes(sData);
-                    request.ContentLength = postData.Length;
-                    requestStream = request.GetRequestStream();
-                    requestStream.Write(postData, 0, postData.Length);
-                    requestStream.Close();
-                }
-                response = (HttpWebResponse)request.GetResponse();
-                if (response.StatusCode == HttpStatusCode.OK)
-                {
-                    responseStream = response.GetResponseStream();
-                    if (response.ContentEncoding != null && response.ContentEncoding.ToLower().Contains("gzip"))
-                        responseStream = new GZipStream(responseStream, CompressionMode.Decompress);
-                    else if (response.ContentEncoding != null && response.ContentEncoding.ToLower().Contains("deflate"))
-                        responseStream = new DeflateStream(responseStream, CompressionMode.Decompress);
-                    streamReader = new StreamReader(responseStream, Encoding.GetEncoding(sCode == "" ? "utf-8" : sCode));
-                    r = streamReader.ReadToEnd();
-                }
-            }
-            catch (WebException ex)
-            {
-            }
-            catch (Exception ex) { }
-            finally
-            {
-                if (request != null) request = null;
-                if (response != null) { response.Close(); response = null; }
-                if (requestStream != null) requestStream.Close();
-                if (responseStream != null) responseStream.Close();
-                if (streamReader != null) streamReader.Close();
-            }
-            return r;
-        }
+        //public static string GetHtmlMethod(string sMethod, string sName, string sData, string sHeader, string sReferer,
+        //    string sContentType, string sHost, string sCode)
+        //{
+        //    string r = "";
+        //    HttpWebRequest request = null;
+        //    HttpWebResponse response = null;
+        //    Stream requestStream = null;
+        //    Stream responseStream = null;
+        //    StreamReader streamReader = null;
+        //    try
+        //    {
+        //        request = (HttpWebRequest)WebRequest.Create(sName);
+        //        request.UserAgent = sUserAgent;
+        //        if (sReferer != "") request.Referer = sReferer;
+        //        if (sHost != "") request.Host = sHost;
+        //        if (sContentType != "") request.ContentType = sContentType;
+        //        else if (sMethod == "POST") request.ContentType = "application/x-www-form-urlencoded";
+        //        request.Method = sMethod;
+        //        if (sHeader != "")
+        //        {
+        //            string[] ss0 = sHeader.Split(',');
+        //            foreach (string s in ss0)
+        //            {
+        //                string s0 = s.Substring(0, s.IndexOf(':'));
+        //                string s1 = s.Substring(s.IndexOf(':') + 1);
+        //                request.Headers[s0.Trim()] = s1.Trim();
+        //            }
+        //        }
+        //        if (sData != "")
+        //        {
+        //            byte[] postData = Encoding.UTF8.GetBytes(sData);
+        //            request.ContentLength = postData.Length;
+        //            requestStream = request.GetRequestStream();
+        //            requestStream.Write(postData, 0, postData.Length);
+        //            requestStream.Close();
+        //        }
+        //        response = (HttpWebResponse)request.GetResponse();
+        //        if (response.StatusCode == HttpStatusCode.OK)
+        //        {
+        //            responseStream = response.GetResponseStream();
+        //            if (response.ContentEncoding != null && response.ContentEncoding.ToLower().Contains("gzip"))
+        //                responseStream = new GZipStream(responseStream, CompressionMode.Decompress);
+        //            else if (response.ContentEncoding != null && response.ContentEncoding.ToLower().Contains("deflate"))
+        //                responseStream = new DeflateStream(responseStream, CompressionMode.Decompress);
+        //            streamReader = new StreamReader(responseStream, Encoding.GetEncoding(sCode == "" ? "utf-8" : sCode));
+        //            r = streamReader.ReadToEnd();
+        //        }
+        //    }
+        //    catch (WebException ex)
+        //    {
+        //    }
+        //    catch (Exception ex) { }
+        //    finally
+        //    {
+        //        if (request != null) request = null;
+        //        if (response != null) { response.Close(); response = null; }
+        //        if (requestStream != null) requestStream.Close();
+        //        if (responseStream != null) responseStream.Close();
+        //        if (streamReader != null) streamReader.Close();
+        //    }
+        //    return r;
+        //}
 
-        public static string GetHtmlMethod(string sMethod, string sName, string sData, string sHeader, string sReferer,
-            string sContentType, string sCode)
-        {
-            string r = "";
-            HttpWebRequest request = null;
-            HttpWebResponse response = null;
-            Stream requestStream = null;
-            Stream responseStream = null;
-            StreamReader streamReader = null;
-            try
-            {
-                request = (HttpWebRequest)WebRequest.Create(sName);
-                request.UserAgent = sUserAgent;
-                if (sReferer != "") request.Referer = sReferer;
-                if (sContentType != "") request.ContentType = sContentType;
-                else if (sMethod == "POST") request.ContentType = "application/x-www-form-urlencoded";
-                request.Method = sMethod;
-                if (sHeader != "")
-                {
-                    string[] ss0 = sHeader.Split(',');
-                    foreach (string s in ss0)
-                    {
-                        string s0 = s.Substring(0, s.IndexOf(':'));
-                        string s1 = s.Substring(s.IndexOf(':') + 1);
-                        request.Headers[s0.Trim()] = s1.Trim();
-                    }
-                }
-                if (sData != "")
-                {
-                    byte[] postData = Encoding.UTF8.GetBytes(sData);
-                    request.ContentLength = postData.Length;
-                    requestStream = request.GetRequestStream();
-                    requestStream.Write(postData, 0, postData.Length);
-                    requestStream.Close();
-                }
-                response = (HttpWebResponse)request.GetResponse();
-                if (response.StatusCode == HttpStatusCode.OK)
-                {
-                    responseStream = response.GetResponseStream();
-                    if (response.ContentEncoding != null && response.ContentEncoding.ToLower().Contains("gzip"))
-                        responseStream = new GZipStream(responseStream, CompressionMode.Decompress);
-                    else if (response.ContentEncoding != null && response.ContentEncoding.ToLower().Contains("deflate"))
-                        responseStream = new DeflateStream(responseStream, CompressionMode.Decompress);
-                    streamReader = new StreamReader(responseStream, Encoding.GetEncoding(sCode == "" ? "utf-8" : sCode));
-                    r = streamReader.ReadToEnd();
-                }
-            }
-            catch (WebException ex)
-            {
-            }
-            catch (Exception ex) { }
-            finally
-            {
-                if (request != null) request = null;
-                if (response != null) { response.Close(); response = null; }
-                if (requestStream != null) requestStream.Close();
-                if (responseStream != null) responseStream.Close();
-                if (streamReader != null) streamReader.Close();
-            }
-            return r;
-        }
+        //public static string GetHtmlMethod(string sMethod, string sName, string sData, string sHeader, string sReferer,
+        //    string sContentType, string sCode)
+        //{
+        //    string r = "";
+        //    HttpWebRequest request = null;
+        //    HttpWebResponse response = null;
+        //    Stream requestStream = null;
+        //    Stream responseStream = null;
+        //    StreamReader streamReader = null;
+        //    try
+        //    {
+        //        request = (HttpWebRequest)WebRequest.Create(sName);
+        //        request.UserAgent = sUserAgent;
+        //        if (sReferer != "") request.Referer = sReferer;
+        //        if (sContentType != "") request.ContentType = sContentType;
+        //        else if (sMethod == "POST") request.ContentType = "application/x-www-form-urlencoded";
+        //        request.Method = sMethod;
+        //        if (sHeader != "")
+        //        {
+        //            string[] ss0 = sHeader.Split(',');
+        //            foreach (string s in ss0)
+        //            {
+        //                string s0 = s.Substring(0, s.IndexOf(':'));
+        //                string s1 = s.Substring(s.IndexOf(':') + 1);
+        //                request.Headers[s0.Trim()] = s1.Trim();
+        //            }
+        //        }
+        //        if (sData != "")
+        //        {
+        //            byte[] postData = Encoding.UTF8.GetBytes(sData);
+        //            request.ContentLength = postData.Length;
+        //            requestStream = request.GetRequestStream();
+        //            requestStream.Write(postData, 0, postData.Length);
+        //            requestStream.Close();
+        //        }
+        //        response = (HttpWebResponse)request.GetResponse();
+        //        if (response.StatusCode == HttpStatusCode.OK)
+        //        {
+        //            responseStream = response.GetResponseStream();
+        //            if (response.ContentEncoding != null && response.ContentEncoding.ToLower().Contains("gzip"))
+        //                responseStream = new GZipStream(responseStream, CompressionMode.Decompress);
+        //            else if (response.ContentEncoding != null && response.ContentEncoding.ToLower().Contains("deflate"))
+        //                responseStream = new DeflateStream(responseStream, CompressionMode.Decompress);
+        //            streamReader = new StreamReader(responseStream, Encoding.GetEncoding(sCode == "" ? "utf-8" : sCode));
+        //            r = streamReader.ReadToEnd();
+        //        }
+        //    }
+        //    catch (WebException ex)
+        //    {
+        //    }
+        //    catch (Exception ex) { }
+        //    finally
+        //    {
+        //        if (request != null) request = null;
+        //        if (response != null) { response.Close(); response = null; }
+        //        if (requestStream != null) requestStream.Close();
+        //        if (responseStream != null) responseStream.Close();
+        //        if (streamReader != null) streamReader.Close();
+        //    }
+        //    return r;
+        //}
 
-        public static string GetHtmlMethod(string sMethod, string sName, string sData, string sHeader, string sReferer)
-        {
-            string r = "";
-            HttpWebRequest request = null;
-            HttpWebResponse response = null;
-            Stream requestStream = null;
-            Stream responseStream = null;
-            StreamReader streamReader = null;
-            try
-            {
-                request = (HttpWebRequest)WebRequest.Create(sName);
-                request.UserAgent = sUserAgent;
-                if (sReferer != "") request.Referer = sReferer;
-                else if (sMethod == "POST") request.ContentType = "application/x-www-form-urlencoded";
-                request.Method = sMethod;
-                if (sHeader != "")
-                {
-                    string[] ss0 = sHeader.Split(',');
-                    foreach (string s in ss0)
-                    {
-                        string s0 = s.Substring(0, s.IndexOf(':'));
-                        string s1 = s.Substring(s.IndexOf(':') + 1);
-                        request.Headers[s0.Trim()] = s1.Trim();
-                    }
-                }
-                if (sData != "")
-                {
-                    byte[] postData = Encoding.UTF8.GetBytes(sData);
-                    request.ContentLength = postData.Length;
-                    requestStream = request.GetRequestStream();
-                    requestStream.Write(postData, 0, postData.Length);
-                    requestStream.Close();
-                }
-                response = (HttpWebResponse)request.GetResponse();
-                if (response.StatusCode == HttpStatusCode.OK)
-                {
-                    responseStream = response.GetResponseStream();
-                    if (response.ContentEncoding != null && response.ContentEncoding.ToLower().Contains("gzip"))
-                        responseStream = new GZipStream(responseStream, CompressionMode.Decompress);
-                    else if (response.ContentEncoding != null && response.ContentEncoding.ToLower().Contains("deflate"))
-                        responseStream = new DeflateStream(responseStream, CompressionMode.Decompress);
-                    streamReader = new StreamReader(responseStream, Encoding.GetEncoding("utf-8"));
-                    r = streamReader.ReadToEnd();
-                }
-            }
-            catch (WebException ex)
-            {
-            }
-            catch (Exception ex) { }
-            finally
-            {
-                if (request != null) request = null;
-                if (response != null) { response.Close(); response = null; }
-                if (requestStream != null) requestStream.Close();
-                if (responseStream != null) responseStream.Close();
-                if (streamReader != null) streamReader.Close();
-            }
-            return r;
-        }
+        //public static string GetHtmlMethod(string sMethod, string sName, string sData, string sHeader, string sReferer)
+        //{
+        //    string r = "";
+        //    HttpWebRequest request = null;
+        //    HttpWebResponse response = null;
+        //    Stream requestStream = null;
+        //    Stream responseStream = null;
+        //    StreamReader streamReader = null;
+        //    try
+        //    {
+        //        request = (HttpWebRequest)WebRequest.Create(sName);
+        //        request.UserAgent = sUserAgent;
+        //        if (sReferer != "") request.Referer = sReferer;
+        //        else if (sMethod == "POST") request.ContentType = "application/x-www-form-urlencoded";
+        //        request.Method = sMethod;
+        //        if (sHeader != "")
+        //        {
+        //            string[] ss0 = sHeader.Split(',');
+        //            foreach (string s in ss0)
+        //            {
+        //                string s0 = s.Substring(0, s.IndexOf(':'));
+        //                string s1 = s.Substring(s.IndexOf(':') + 1);
+        //                request.Headers[s0.Trim()] = s1.Trim();
+        //            }
+        //        }
+        //        if (sData != "")
+        //        {
+        //            byte[] postData = Encoding.UTF8.GetBytes(sData);
+        //            request.ContentLength = postData.Length;
+        //            requestStream = request.GetRequestStream();
+        //            requestStream.Write(postData, 0, postData.Length);
+        //            requestStream.Close();
+        //        }
+        //        response = (HttpWebResponse)request.GetResponse();
+        //        if (response.StatusCode == HttpStatusCode.OK)
+        //        {
+        //            responseStream = response.GetResponseStream();
+        //            if (response.ContentEncoding != null && response.ContentEncoding.ToLower().Contains("gzip"))
+        //                responseStream = new GZipStream(responseStream, CompressionMode.Decompress);
+        //            else if (response.ContentEncoding != null && response.ContentEncoding.ToLower().Contains("deflate"))
+        //                responseStream = new DeflateStream(responseStream, CompressionMode.Decompress);
+        //            streamReader = new StreamReader(responseStream, Encoding.GetEncoding("utf-8"));
+        //            r = streamReader.ReadToEnd();
+        //        }
+        //    }
+        //    catch (WebException ex)
+        //    {
+        //    }
+        //    catch (Exception ex) { }
+        //    finally
+        //    {
+        //        if (request != null) request = null;
+        //        if (response != null) { response.Close(); response = null; }
+        //        if (requestStream != null) requestStream.Close();
+        //        if (responseStream != null) responseStream.Close();
+        //        if (streamReader != null) streamReader.Close();
+        //    }
+        //    return r;
+        //}
 
-        public static string GetHtmlMethodOrigin(string sName)
-        {
-            string r = "";
-            HttpWebRequest request = null;
-            HttpWebResponse response = null;
-            try
-            {
-                if (!sName.StartsWith("http://") && !sName.StartsWith("https://")) return "";
-                request = (HttpWebRequest)WebRequest.Create(sName);
-                request.UserAgent = sUserAgent;
-                request.Timeout = request.ReadWriteTimeout = 10 * 1000;
-                request.AllowAutoRedirect = false;
-                response = (HttpWebResponse)request.GetResponse();
-                r = response.Headers["Location"];
-            }
-            catch (Exception ex) { Log(MethodBase.GetCurrentMethod().Name + ": " + ex.Message); }
-            finally
-            {
-                if (request != null) request = null;
-                if (response != null) { response.Close(); response = null; }
-            }
-            return r;
-        }
+        //public static string GetHtmlMethodOrigin(string sName)
+        //{
+        //    string r = "";
+        //    HttpWebRequest request = null;
+        //    HttpWebResponse response = null;
+        //    try
+        //    {
+        //        if (!sName.StartsWith("http://") && !sName.StartsWith("https://")) return "";
+        //        request = (HttpWebRequest)WebRequest.Create(sName);
+        //        request.UserAgent = sUserAgent;
+        //        request.Timeout = request.ReadWriteTimeout = 10 * 1000;
+        //        request.AllowAutoRedirect = false;
+        //        response = (HttpWebResponse)request.GetResponse();
+        //        r = response.Headers["Location"];
+        //    }
+        //    catch (Exception ex) { Log(MethodBase.GetCurrentMethod().Name + ": " + ex.Message); }
+        //    finally
+        //    {
+        //        if (request != null) request = null;
+        //        if (response != null) { response.Close(); response = null; }
+        //    }
+        //    return r;
+        //}
 
         public bool DownloadHtml(string name, string host, string referer, string sFileName)
         {
@@ -1768,29 +1768,29 @@ aws s3 sync C:\oLink\File s3://^S3Bucket^/File --acl public-read --region eu-wes
             return false;
         }
 
-        public bool CheckHtml(string sName)
-        {
-            HttpWebRequest request = null;
-            HttpWebResponse response = null;
-            bool r = false;
-            try
-            {
-                if (!sName.StartsWith("http://") && !sName.StartsWith("https://")) return r;
-                request = (HttpWebRequest)WebRequest.Create(sName);
-                request.UserAgent = sUserAgent;
-                request.Timeout = request.ReadWriteTimeout = 30 * 1000;
-                response = (HttpWebResponse)request.GetResponse();
-                if (response.StatusCode == HttpStatusCode.OK) r = true;
-                else ShowMsgD(response.StatusCode + "");
-            }
-            catch (Exception ex) { ShowMsgD(ex.Message); }
-            finally
-            {
-                if (response != null) { response.Close(); response = null; }
-                if (request != null) request = null;
-            }
-            return r;
-        }
+        //public bool CheckHtml(string sName)
+        //{
+        //    HttpWebRequest request = null;
+        //    HttpWebResponse response = null;
+        //    bool r = false;
+        //    try
+        //    {
+        //        if (!sName.StartsWith("http://") && !sName.StartsWith("https://")) return r;
+        //        request = (HttpWebRequest)WebRequest.Create(sName);
+        //        request.UserAgent = sUserAgent;
+        //        request.Timeout = request.ReadWriteTimeout = 30 * 1000;
+        //        response = (HttpWebResponse)request.GetResponse();
+        //        if (response.StatusCode == HttpStatusCode.OK) r = true;
+        //        else ShowMsgD(response.StatusCode + "");
+        //    }
+        //    catch (Exception ex) { ShowMsgD(ex.Message); }
+        //    finally
+        //    {
+        //        if (response != null) { response.Close(); response = null; }
+        //        if (request != null) request = null;
+        //    }
+        //    return r;
+        //}
 
         // SQL Utility
         public static string ExecuteSQLResult(string s)
