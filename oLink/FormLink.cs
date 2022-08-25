@@ -1,33 +1,33 @@
-﻿using System;
-using System.Windows.Forms;
-using System.IO;
-using System.Drawing;
-using System.Text;
-using System.Text.RegularExpressions;
-using System.Net;
-using System.IO.Compression;
+﻿using Ganss.XSS;
+using System;
+using System.Configuration;
 using System.Data;
 using System.Data.SqlClient;
-using System.Web;
-using System.Reflection;
-using System.Threading;
 using System.Diagnostics;
-using System.Collections.Generic;
+using System.Drawing;
+using System.IO;
+using System.IO.Compression;
+using System.Net;
+using System.Reflection;
 using System.Security.Cryptography;
-using System.Configuration;
+using System.Text;
+using System.Text.RegularExpressions;
+using System.Threading;
+using System.Web;
+using System.Windows.Forms;
 
 namespace oLink
 {
     public partial class FormLink : Form
     {
-        static private string sAppName = "oLink";
-        static private string sVersion = "001";
-        static private Point mp;
-        static private Random random = new Random();
-        static private string sUserAgent = "Mozilla/5.0 (Windows NT 6.1; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/65.0.3325.162 Safari/537.36";
-        static public string sWaited = "<div class=\"artn\"><p style=\"text-align:center;\">^wait^</p></div>";
-        static public string sNFound = "<div class=\"artn\"><p style=\"text-align:center;\">解析失败</p></div>";
-        static public string sConvert = "<div class=\"artn\"><p style=\"text-align:center;\">正在转换</p></div>";
+        private static string sAppName = "oLink";
+        private static string sVersion = "001";
+        private static Point mp;
+        private static Random random = new Random();
+        private static string sUserAgent = "Mozilla/5.0 (Windows NT 6.1; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/65.0.3325.162 Safari/537.36";
+        public static string sWaited = "<div class=\"artn\"><p style=\"text-align:center;\">^wait^</p></div>";
+        public static string sNFound = "<div class=\"artn\"><p style=\"text-align:center;\">解析失败</p></div>";
+        public static string sConvert = "<div class=\"artn\"><p style=\"text-align:center;\">正在转换</p></div>";
 
         public FormLink()
         {
@@ -183,7 +183,6 @@ namespace oLink
                 ShowDataGridView1();
             }
             catch (Exception ex) { Log(MethodBase.GetCurrentMethod().Name + ": " + ex.Message); }
-
         }
 
         private void button4_Click(object sender, EventArgs e)
@@ -217,7 +216,7 @@ namespace oLink
                         string s3 = ExecuteSQLResult(sql);
 
                         string s4 = GetHtmlPlayer(s2, s封面);
-                        s4=s4.Replace("[链接[", "<a href=\"javascript:void(0);\" onclick=\"javascript:Load(encodeURI('")
+                        s4 = s4.Replace("[链接[", "<a href=\"javascript:void(0);\" onclick=\"javascript:Load(encodeURI('")
                             .Replace("[链接]", "'));\">").Replace("[链接当前]", "'));\">").Replace("]链接]", "</a>");
                         s4 = ooView.sShow.Replace("^文章^", s4);
                         SaveFile(s4, "Site/c" + int.Parse(s3).ToString("D6") + ".htm");
@@ -311,7 +310,7 @@ namespace oLink
             {
                 string s1 = ooData.sG10文件Add
                     .Replace("^名称^", GetSqlParam(name));
-                string s2=ExecuteSQLResult(s1);
+                string s2 = ExecuteSQLResult(s1);
                 string s4 = "File/" + int.Parse(s2).ToString("D6");
                 if (name.EndsWith(".jpg")) s4 += ".jpg";
                 if (name.EndsWith(".jpeg")) s4 += ".jpg";
@@ -320,10 +319,10 @@ namespace oLink
                 if (name.EndsWith(".webp")) s4 += ".webp";
                 if (name.EndsWith(".mp3")) s4 += ".mp3";
                 if (name.EndsWith(".mp4")) s4 += ".mp4";
-                if (name.EndsWith("@@images/image")|| name.EndsWith("@@images/image/social_media")) s4 += ".jpg";
+                if (name.EndsWith("@@images/image") || name.EndsWith("@@images/image/social_media")) s4 += ".jpg";
                 if (name.EndsWith("@@stream")) s4 += ".mp3";
                 DownloadHtml(name, "", "", s4);
-                return "../"+s4;
+                return "../" + s4;
             }
             catch (Exception ex) { Log(MethodBase.GetCurrentMethod().Name + ": " + ex.Message); }
             return "";
@@ -402,12 +401,12 @@ aws s3 sync C:\oLink\File s3://^S3Bucket^/File --acl public-read --region eu-wes
         }
 
         // Player
-        static public string GetVideoPlayer(string url, string track = "", string cover = "", string myip = "", bool bDownload = true)
+        public static string GetVideoPlayer(string url, string track = "", string cover = "", string myip = "", bool bDownload = true)
         {
             if (url == "") return "";
             if (url.StartsWith("https://player.vimeo.com/video/")) url = url.Replace("https://player.vimeo.com/", "https://vimeo.com/");
             if (url.StartsWith("https://www.youtube.com/") || url.StartsWith("https://www.youtube.com/embed/"))
-                url = url.Replace("https://www.youtube.com/watch?v=", "https://youtu.be/").Replace("https://www.youtube.com/embed/", "https://youtu.be/");            
+                url = url.Replace("https://www.youtube.com/watch?v=", "https://youtu.be/").Replace("https://www.youtube.com/embed/", "https://youtu.be/");
 
             string sVideoL = ""; string sVideoM = ""; string sVideoH = ""; string sVideoV = ""; string sVideoM2 = ""; string sVideoV2 = "";
             string sAudio140 = ""; string sAudio171 = ""; string sAudio249 = ""; string sAudio250 = ""; string sAudio251 = "";
@@ -638,12 +637,12 @@ aws s3 sync C:\oLink\File s3://^S3Bucket^/File --acl public-read --region eu-wes
             return r.Replace("^id^", id);
         }
 
-        static private string GetYoutube(string s3)
+        private static string GetYoutube(string s3)
         {
             return s3;
         }
 
-        static private string GetAudioPlayer(string url, string cover = "")
+        private static string GetAudioPlayer(string url, string cover = "")
         {
             url = GetEnUrl(url);
             string id = GetRandomNum();
@@ -652,7 +651,7 @@ aws s3 sync C:\oLink\File s3://^S3Bucket^/File --acl public-read --region eu-wes
         src=""^url^"" ^poster^>
     </video>
     <div class=""navv""><div class=""nav"" style=""width:100%; height:28px; position:absolute; top:0;"">
-        <ul class=""nav__menu"" style=""text-align:right;"">           
+        <ul class=""nav__menu"" style=""text-align:right;"">
             <li class=""nav__menu-item""><a>速度</a>
                 <ul class=""nav__submenu"">
                     <li class=""nav__submenu-item"" onclick='javascript:document.getElementById(""v^id^"").playbackRate=0.5;'><a>0.5</a></li>
@@ -681,7 +680,7 @@ aws s3 sync C:\oLink\File s3://^S3Bucket^/File --acl public-read --region eu-wes
             .Replace("^poster^", (cover != "" ? "poster=\"" + cover + "\"" : ""));
         }
 
-        static private string GetSoundPlayer(string url, string cover = "")
+        private static string GetSoundPlayer(string url, string cover = "")
         {
             url = EnUrl2(url);
             return @"
@@ -692,7 +691,7 @@ aws s3 sync C:\oLink\File s3://^S3Bucket^/File --acl public-read --region eu-wes
             .Replace("^poster^", (cover != "" ? "poster='" + GetHtmlParam(cover) + "'" : ""));
         }
 
-        static private string GetM3u8Player(string url)
+        private static string GetM3u8Player(string url)
         {
             url = GetEnUrl(url);
             return @"
@@ -701,7 +700,7 @@ aws s3 sync C:\oLink\File s3://^S3Bucket^/File --acl public-read --region eu-wes
     </video>".Replace("@id", GetRandomNum()).Replace("@src", url); /// no poster= poster=""""
         }
 
-        static private string GetFlashPlayer(string url)
+        private static string GetFlashPlayer(string url)
         {
             url = EnUrl2(url);
             return @"
@@ -709,13 +708,13 @@ aws s3 sync C:\oLink\File s3://^S3Bucket^/File --acl public-read --region eu-wes
 <style> .flowplayer {background-color:#ffffd0;} </style>
 <script src=""/src/flowplayer.min.js""></script>
 <div class=""flowplayer"">
-    <video> 
-        <source type=""video/flash"" src=""@src"">    
+    <video>
+        <source type=""video/flash"" src=""@src"">
     </video>
 </div>".Replace("@src", GetHtmlParam(url));
         }
 
-        static private string GetImagePlayerTop(string url)
+        private static string GetImagePlayerTop(string url)
         {
             url = GetEnUrl(url);
             return @"<div class='videocontainer'>
@@ -729,7 +728,7 @@ aws s3 sync C:\oLink\File s3://^S3Bucket^/File --acl public-read --region eu-wes
             .Replace("^url^", url);
         }
 
-        static private string GetImagePlayer(string url)
+        private static string GetImagePlayer(string url)
         {
             url = EnUrl2(url);
             return @"<div class='videocontainer' style='max-width:580px; margin:6px auto;'>
@@ -743,14 +742,14 @@ aws s3 sync C:\oLink\File s3://^S3Bucket^/File --acl public-read --region eu-wes
             .Replace("^url^", GetHtmlParam(url));
         }
 
-        static private string GetDownloadPlayer(string url)
+        private static string GetDownloadPlayer(string url)
         {
             url = EnUrl2(url);
             return "\r\n  <div class='buttoncontainer'><a href='javascript:void(0);' onclick=\"javascript:Save('"
                 + GetHtmlParam(url) + "');\"><div class='button'>点击下载</div></a></div><div class='lisw'></div>";
         }
 
-        static private string GetTwitter(string co, string cover, string title)
+        private static string GetTwitter(string co, string cover, string title)
         {
             string r = "";
             try
@@ -771,7 +770,7 @@ aws s3 sync C:\oLink\File s3://^S3Bucket^/File --acl public-read --region eu-wes
             return r;
         }
 
-        static private string GetEnUrl(string url)
+        private static string GetEnUrl(string url)
         {
             return EnUrl2(url);
         }
@@ -1011,8 +1010,8 @@ aws s3 sync C:\oLink\File s3://^S3Bucket^/File --acl public-read --region eu-wes
                     Match m1 = new Regex("(<h1>)([\\S\\s]*?)(</h1>)").Match(co);
                     Match m2 = new Regex("(?<=<div id=\"storytext\">)([\\S\\s]*?)(?=</div> <!-- END storytext-->)").Match(co);
                     Match m = new Regex("(?<=<meta content=\")([\\S]*?)(?=\" property=\"og:audio\"/>)").Match(co);
-                    if(!m.Success) m = new Regex(@"(?<=content=[""|'])([\S]*?)(?=[""|']\s*?property=[""|']og:image[""|'])").Match(co);
-                    if (m.Success)coMedia = m.Value;
+                    if (!m.Success) m = new Regex(@"(?<=content=[""|'])([\S]*?)(?=[""|']\s*?property=[""|']og:image[""|'])").Match(co);
+                    if (m.Success) coMedia = m.Value;
                     co = m1.Value + "\r\n" + m2.Value;
                     co = HtmlDel2(co, name).Replace("<p>", "<p class=\"artl\">");
                 }
@@ -1038,7 +1037,7 @@ aws s3 sync C:\oLink\File s3://^S3Bucket^/File --acl public-read --region eu-wes
             return "";
         }
 
-        static public string HtmlDel(string content, string regex)
+        public static string HtmlDel(string content, string regex)
         {
             MatchCollection mc0 = new Regex(regex).Matches(content);
             foreach (Match m in mc0)
@@ -1050,97 +1049,107 @@ aws s3 sync C:\oLink\File s3://^S3Bucket^/File --acl public-read --region eu-wes
 
         public string HtmlDel2(string content, string url)
         {
+            // filter example:
+            //content += @"<><<>img src=x onerror=""alert('img tag/script bypassed filtering'); "">";
+            var sanitizer = new HtmlSanitizer();
             try
             {
-                content = HtmlDel(content, "(<head)([\\S\\s]*?)(</head>)");
-                content = HtmlDel(content, "(<script)([\\S\\s]*?)(</script>)");
-                content = HtmlDel(content, "(<noscript)([\\S\\s]*?)(</noscript>)");
-                content = HtmlDel(content, "(<style)([\\S\\s]*?)(</style>)");
-                content = HtmlDel(content, "(<ins)([\\S\\s]*?)(</ins>)");
-
-                MatchCollection mc1 = new Regex("(<a )([\\S\\s]*?)(</a>)").Matches(content);
-                foreach (Match m in mc1)
-                {
-                    Match m0 = new Regex("(?<=href=\"[\\s]*?)([\\S]*?)(?=[\\s]*?\")").Match(m.Value);
-                    if (!m0.Success) m0 = new Regex("(?<=href=)([\\S]*?)(?=[\\s|>])").Match(m.Value);
-                    Match m1 = new Regex("(?<=>)([\\S\\s]*?)(?=</a>)").Match(m.Value);
-                    if (!m0.Success || !m1.Success) { content = content.Replace(m.Value, ""); continue; }
-                    string sHref = HtmlHref(m0.Value, url);
-                    string s1 = ooData.sG10事物Get.Replace("^名称^",GetSqlParam(sHref));
-                    string s2 = ExecuteSQLResult(s1);
-                    if (s2 != "")
-                        content = content.Replace(m.Value, "[链接[c" + int.Parse(s2).ToString("D6") + "[链接]" + m1.Value + "]链接]");
-                    else content = content.Replace(m.Value, m1.Value);
-                }
-
-                MatchCollection mc0 = new Regex("(<)([\\S\\s]*?)(>)").Matches(content);
-                foreach (Match m in mc0)
-                {
-                    if (m.Value == "<p>" || m.Value == "</p>" || m.Value == "<p class=\"artl\">" || m.Value == "<p class=\"artc\">"
-                        || m.Value == "<p class=\"artl\" style=\"text-align:center;\">" || m.Value == "<p style=\"text-align:center;\">"
-                        || m.Value == "<b>" || m.Value == "</b>" || m.Value == "<br/>" || m.Value == "<br>" || m.Value == "<br />"
-                        || m.Value == "<strong>" || m.Value == "</strong>"
-                        || m.Value == "</h1>" || m.Value == "</h2>" || m.Value == "</h3>" || m.Value == "</h4>" || m.Value == "</h5>"
-                        || m.Value == "<em>" || m.Value == "</em>" || m.Value == "<sup>" || m.Value == "</sup>") ;
-                    else if (m.Value.StartsWith("<h1")) { content = content.Replace(m.Value, "<h1 style=\"text-align:center;\">"); }
-                    else if (m.Value.StartsWith("<h2")) { content = content.Replace(m.Value, "<h2 style=\"text-align:center;\">"); }
-                    else if (m.Value.StartsWith("<h3")) { content = content.Replace(m.Value, "<h3 style=\"text-align:center;\">"); }
-                    else if (m.Value.StartsWith("<h4")) { content = content.Replace(m.Value, "<h4 style=\"text-align:center;\">"); }
-                    else if (m.Value.StartsWith("<h5")) { content = content.Replace(m.Value, "<h5 style=\"text-align:center;\">"); }
-                    else if (m.Value.StartsWith("<p")) content = content.Replace(m.Value, "<p>");
-                    else if (m.Value.StartsWith("<img") || m.Value.StartsWith("<IMG"))
-                    {
-                        Match m0 = new Regex("(?<=data-src=\")([\\S\\s]*?)(?=\")").Match(m.Value);
-                        if (!m0.Success) m0 = new Regex("(?<=src=\")([\\S\\s]*?)(?=\")").Match(m.Value);
-                        if (!m0.Success) m0 = new Regex("(?<=src=)([\\S]*?)(?=[\\s|>])").Match(m.Value);
-                        if (m0.Value.StartsWith("data:image/")) continue;
-                        Match m1 = new Regex("(?<=width=\")([\\S\\s]*?)(?=\")").Match(m.Value);
-                        string sHref = GetHtmlParam(HtmlHref(m0.Value, url));
-                        int w = 0; int.TryParse(m1.Value, out w);
-                        if (m0.Value == "/rmb/images/rmb_donation_200x200.jpg"
-                            || sHref == "https://www.rfa.org/++plone++rfa-resources/img/icon-zoom.png") content = content.Replace(m.Value, "");
-                        else
-                        {
-                            sHref = GetFile(sHref);
-                            if (w < 45 && w > 0) content = content.Replace(m.Value, "<img src=\"" + EnUrl2(sHref) + "\">");
-                            else content = content.Replace(m.Value, "<img class=\"artl\" src=\"" + EnUrl2(sHref) + "\">");
-                        }
-                    }
-                    else if (m.Value.StartsWith("<table")) content = content.Replace(m.Value, "<table>");
-                    else if (m.Value.StartsWith("<thead")) content = content.Replace(m.Value, "<thead>");
-                    else if (m.Value.StartsWith("<tr")) content = content.Replace(m.Value, "<tr>");
-                    else if (m.Value.StartsWith("<td"))
-                    {
-                        Match m0 = new Regex("( rowspan=\")([\\S\\s]*?)(\")").Match(m.Value);
-                        Match m1 = new Regex("( colspan=\")([\\S\\s]*?)(\")").Match(m.Value);
-                        content = content.Replace(m.Value, "<td" + m0.Value + m1.Value + ">");
-                    }
-                    else if (m.Value.StartsWith("<th"))
-                    {
-                        Match m0 = new Regex("( rowspan=\")([\\S\\s]*?)(\")").Match(m.Value);
-                        Match m1 = new Regex("( colspan=\")([\\S\\s]*?)(\")").Match(m.Value);
-                        content = content.Replace(m.Value, "<th" + m0.Value + m1.Value + ">");
-                    }
-                    else if (m.Value == "</th>" || m.Value == "</td>" || m.Value == "</tr>"
-                        || m.Value == "<tbody>" || m.Value == "</tbody>"
-                        || m.Value == "</thead>" || m.Value == "</table>") ;
-                    else if (m.Value.StartsWith("<sup")) content = content.Replace(m.Value, "<sup>");
-                    else if (m.Value == "<li>" || m.Value.StartsWith("<li ")) content = content.Replace(m.Value, "<li>");
-                    else if (m.Value == "</li>") ;
-                    else if (m.Value.StartsWith("<ol")) content = content.Replace(m.Value, "<ol>");
-                    else if (m.Value == "</ol>") ;
-                    else content = content.Replace(m.Value, "");
-                }
-
-                content = content.Replace("\t", "").Replace("\n\n", "\n").Replace("\n\n", "\n").Replace("\n\n", "\n")
-                    .Replace("\n", "\r\n").Replace("\r\r\n", "\r\n");
+                content = sanitizer.Sanitize(content, url);
                 return content;
             }
             catch (Exception ex) { Log(MethodBase.GetCurrentMethod().Name + ": " + ex.Message); }
             return "";
+            //try
+            //{
+            //    content = HtmlDel(content, "(<head)([\\S\\s]*?)(</head>)");
+            //    content = HtmlDel(content, "(<script)([\\S\\s]*?)(</script>)");
+            //    content = HtmlDel(content, "(<noscript)([\\S\\s]*?)(</noscript>)");
+            //    content = HtmlDel(content, "(<style)([\\S\\s]*?)(</style>)");
+            //    content = HtmlDel(content, "(<ins)([\\S\\s]*?)(</ins>)");
+
+            //    MatchCollection mc1 = new Regex("(<a )([\\S\\s]*?)(</a>)").Matches(content);
+            //    foreach (Match m in mc1)
+            //    {
+            //        Match m0 = new Regex("(?<=href=\"[\\s]*?)([\\S]*?)(?=[\\s]*?\")").Match(m.Value);
+            //        if (!m0.Success) m0 = new Regex("(?<=href=)([\\S]*?)(?=[\\s|>])").Match(m.Value);
+            //        Match m1 = new Regex("(?<=>)([\\S\\s]*?)(?=</a>)").Match(m.Value);
+            //        if (!m0.Success || !m1.Success) { content = content.Replace(m.Value, ""); continue; }
+            //        string sHref = HtmlHref(m0.Value, url);
+            //        string s1 = ooData.sG10事物Get.Replace("^名称^",GetSqlParam(sHref));
+            //        string s2 = ExecuteSQLResult(s1);
+            //        if (s2 != "")
+            //            content = content.Replace(m.Value, "[链接[c" + int.Parse(s2).ToString("D6") + "[链接]" + m1.Value + "]链接]");
+            //        else content = content.Replace(m.Value, m1.Value);
+            //    }
+
+            //    MatchCollection mc0 = new Regex("(<)([\\S\\s]*?)(>)").Matches(content);
+            //    foreach (Match m in mc0)
+            //    {
+            //        if (m.Value == "<p>" || m.Value == "</p>" || m.Value == "<p class=\"artl\">" || m.Value == "<p class=\"artc\">"
+            //            || m.Value == "<p class=\"artl\" style=\"text-align:center;\">" || m.Value == "<p style=\"text-align:center;\">"
+            //            || m.Value == "<b>" || m.Value == "</b>" || m.Value == "<br/>" || m.Value == "<br>" || m.Value == "<br />"
+            //            || m.Value == "<strong>" || m.Value == "</strong>"
+            //            || m.Value == "</h1>" || m.Value == "</h2>" || m.Value == "</h3>" || m.Value == "</h4>" || m.Value == "</h5>"
+            //            || m.Value == "<em>" || m.Value == "</em>" || m.Value == "<sup>" || m.Value == "</sup>") ;
+            //        else if (m.Value.StartsWith("<h1")) { content = content.Replace(m.Value, "<h1 style=\"text-align:center;\">"); }
+            //        else if (m.Value.StartsWith("<h2")) { content = content.Replace(m.Value, "<h2 style=\"text-align:center;\">"); }
+            //        else if (m.Value.StartsWith("<h3")) { content = content.Replace(m.Value, "<h3 style=\"text-align:center;\">"); }
+            //        else if (m.Value.StartsWith("<h4")) { content = content.Replace(m.Value, "<h4 style=\"text-align:center;\">"); }
+            //        else if (m.Value.StartsWith("<h5")) { content = content.Replace(m.Value, "<h5 style=\"text-align:center;\">"); }
+            //        else if (m.Value.StartsWith("<p")) content = content.Replace(m.Value, "<p>");
+            //        else if (m.Value.StartsWith("<img") || m.Value.StartsWith("<IMG"))
+            //        {
+            //            Match m0 = new Regex("(?<=data-src=\")([\\S\\s]*?)(?=\")").Match(m.Value);
+            //            if (!m0.Success) m0 = new Regex("(?<=src=\")([\\S\\s]*?)(?=\")").Match(m.Value);
+            //            if (!m0.Success) m0 = new Regex("(?<=src=)([\\S]*?)(?=[\\s|>])").Match(m.Value);
+            //            if (m0.Value.StartsWith("data:image/")) continue;
+            //            Match m1 = new Regex("(?<=width=\")([\\S\\s]*?)(?=\")").Match(m.Value);
+            //            string sHref = GetHtmlParam(HtmlHref(m0.Value, url));
+            //            int w = 0; int.TryParse(m1.Value, out w);
+            //            if (m0.Value == "/rmb/images/rmb_donation_200x200.jpg"
+            //                || sHref == "https://www.rfa.org/++plone++rfa-resources/img/icon-zoom.png") content = content.Replace(m.Value, "");
+            //            else
+            //            {
+            //                sHref = GetFile(sHref);
+            //                if (w < 45 && w > 0) content = content.Replace(m.Value, "<img src=\"" + EnUrl2(sHref) + "\">");
+            //                else content = content.Replace(m.Value, "<img class=\"artl\" src=\"" + EnUrl2(sHref) + "\">");
+            //            }
+            //        }
+            //        else if (m.Value.StartsWith("<table")) content = content.Replace(m.Value, "<table>");
+            //        else if (m.Value.StartsWith("<thead")) content = content.Replace(m.Value, "<thead>");
+            //        else if (m.Value.StartsWith("<tr")) content = content.Replace(m.Value, "<tr>");
+            //        else if (m.Value.StartsWith("<td"))
+            //        {
+            //            Match m0 = new Regex("( rowspan=\")([\\S\\s]*?)(\")").Match(m.Value);
+            //            Match m1 = new Regex("( colspan=\")([\\S\\s]*?)(\")").Match(m.Value);
+            //            content = content.Replace(m.Value, "<td" + m0.Value + m1.Value + ">");
+            //        }
+            //        else if (m.Value.StartsWith("<th"))
+            //        {
+            //            Match m0 = new Regex("( rowspan=\")([\\S\\s]*?)(\")").Match(m.Value);
+            //            Match m1 = new Regex("( colspan=\")([\\S\\s]*?)(\")").Match(m.Value);
+            //            content = content.Replace(m.Value, "<th" + m0.Value + m1.Value + ">");
+            //        }
+            //        else if (m.Value == "</th>" || m.Value == "</td>" || m.Value == "</tr>"
+            //            || m.Value == "<tbody>" || m.Value == "</tbody>"
+            //            || m.Value == "</thead>" || m.Value == "</table>") ;
+            //        else if (m.Value.StartsWith("<sup")) content = content.Replace(m.Value, "<sup>");
+            //        else if (m.Value == "<li>" || m.Value.StartsWith("<li ")) content = content.Replace(m.Value, "<li>");
+            //        else if (m.Value == "</li>") ;
+            //        else if (m.Value.StartsWith("<ol")) content = content.Replace(m.Value, "<ol>");
+            //        else if (m.Value == "</ol>") ;
+            //        else content = content.Replace(m.Value, "");
+            //    }
+
+            //    content = content.Replace("\t", "").Replace("\n\n", "\n").Replace("\n\n", "\n").Replace("\n\n", "\n")
+            //        .Replace("\n", "\r\n").Replace("\r\r\n", "\r\n");
+            //    return content;
+            //}
+            //catch (Exception ex) { Log(MethodBase.GetCurrentMethod().Name + ": " + ex.Message); }
+            //return "";
         }
 
-        static private string HtmlHref(string sHref, string url)
+        private static string HtmlHref(string sHref, string url)
         {
             try
             {
@@ -1154,7 +1163,7 @@ aws s3 sync C:\oLink\File s3://^S3Bucket^/File --acl public-read --region eu-wes
             return sHref;
         }
 
-        static public string UrlProc(string name)
+        public static string UrlProc(string name)
         {
             try
             {
@@ -1192,52 +1201,55 @@ aws s3 sync C:\oLink\File s3://^S3Bucket^/File --acl public-read --region eu-wes
             catch (Exception ex) { Log(MethodBase.GetCurrentMethod().Name + ": " + ex.Message); }
             return name;
         }
-        static private string GetHtmlParam(string name)
+
+        private static string GetHtmlParam(string name)
         {
             return name.Replace("<", "&lt;").Replace(">", "&gt;")
                 .Replace("'", "&#39;").Replace("\"", "&quot;");
         }
 
         // HtmlRsc
-        static public string EnUrl2(string name, bool bFirst = false)
+        public static string EnUrl2(string name, bool bFirst = false)
         {
             return name;
         }
 
-        static public string EnUrlSymbol(string url)
+        public static string EnUrlSymbol(string url)
         {
             return url.Replace(":", "%3A").Replace("/", "%2F").Replace("?", "%3F").Replace("&", "%26").Replace("#", "%23").Replace("=", "%3D");
         }
 
         // Utility
-        static public void Log(string co)
+        public static void Log(string co)
         {
             WriteErr(co);
         }
 
-        static public void Log(string name, string co)
+        public static void Log(string name, string co)
         {
             Log(name + ": " + co);
         }
 
-        static private string sRandomChars = "abcdefghijklmnopqrstuvwxyz";
-        static private string sRandomChars2 = "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789";
-        static private object oRandom = new object();
-        static public string GetRandom(int len = 12, bool upper = false)
+        private static string sRandomChars = "abcdefghijklmnopqrstuvwxyz";
+        private static string sRandomChars2 = "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789";
+        private static object oRandom = new object();
+
+        public static string GetRandom(int len = 12, bool upper = false)
         {
             string randomChars = upper ? sRandomChars2 : sRandomChars;
             string password = "";
             lock (oRandom) for (int i = 0; i < len; i++) password += randomChars[random.Next(randomChars.Length)];
             return password;
         }
-        static public string GetRandomNum()
+
+        public static string GetRandomNum()
         {
             string password = "";
             lock (oRandom) password = random.Next(10000000, 99999999).ToString();
             return password;
         }
 
-        static private string GetTxt部分(string s摘要, string s链接, int i长度)
+        private static string GetTxt部分(string s摘要, string s链接, int i长度)
         {
             if (s摘要.Length > i长度)
             {
@@ -1251,26 +1263,31 @@ aws s3 sync C:\oLink\File s3://^S3Bucket^/File --acl public-read --region eu-wes
             }
             return s摘要;
         }
-        static private string GetString千万(string page)
+
+        private static string GetString千万(string page)
         {
             if (page.Length >= 5) return page.Substring(0, page.Length - 4) + "万";
             else if (page.Length >= 4) return page.Substring(0, page.Length - 3) + "千";
             else return page;
         }
-        static private string GetString最长(string sIn, int iLen)
+
+        private static string GetString最长(string sIn, int iLen)
         {
             if (sIn.Length <= iLen) return sIn;
             return sIn.Substring(0, iLen - 1) + "…";
         }
-        static private string Get一行(string sIn)
+
+        private static string Get一行(string sIn)
         {
             return Get换行(sIn).Replace("\n", " ");
         }
-        static private string Get换行(string sIn)
+
+        private static string Get换行(string sIn)
         {
             return sIn.Replace("\r\n", "\n").Replace("\r", "\n");
         }
-        static private string Get时距Param(DateTime dt)
+
+        private static string Get时距Param(DateTime dt)
         {
             TimeSpan tsNow = DateTime.Now - dt;
             if (tsNow.TotalMinutes < 1.0) return "[语言[刚刚]语言]";
@@ -1278,11 +1295,13 @@ aws s3 sync C:\oLink\File s3://^S3Bucket^/File --acl public-read --region eu-wes
             if (tsNow.TotalDays < 1.0) return Math.Floor(tsNow.TotalHours) + "[语言[时前]语言]";
             return Math.Floor(tsNow.TotalDays) + "[语言[天前]语言]";
         }
-        static private string GetPict中(string sPict)
+
+        private static string GetPict中(string sPict)
         {
             return GetHtmlParam(sPict.Trim()).Replace("#P ", "").Replace(".jpg", "").Replace(".jpeg", "").Replace(".png", "") + ".M.jpg";
         }
-        static private string GetPictParam(string sPict, string sNumb)
+
+        private static string GetPictParam(string sPict, string sNumb)
         {
             sPict = GetHtmlParam(sPict.Trim());
             if (sPict != "")
@@ -1290,7 +1309,8 @@ aws s3 sync C:\oLink\File s3://^S3Bucket^/File --acl public-read --region eu-wes
                     + ".K.jpg", true) + "'/>";
             else return " style='background:hsla(" + int.Parse(sNumb) % 360 + ",75%,50%,0.5)'>";
         }
-        static private string Get时间(string s)
+
+        private static string Get时间(string s)
         {
             string r = "";
             try
@@ -1301,7 +1321,7 @@ aws s3 sync C:\oLink\File s3://^S3Bucket^/File --acl public-read --region eu-wes
             return r;
         }
 
-        static public string HtmlEn(string input, string password)
+        public static string HtmlEn(string input, string password)
         {
             string r = "";
             if (input.Length == 0) return "";
@@ -1310,7 +1330,7 @@ aws s3 sync C:\oLink\File s3://^S3Bucket^/File --acl public-read --region eu-wes
             return r;
         }
 
-        static public string RSAEncrypt(string publickey, string content)
+        public static string RSAEncrypt(string publickey, string content)
         {
             try
             {
@@ -1322,7 +1342,7 @@ aws s3 sync C:\oLink\File s3://^S3Bucket^/File --acl public-read --region eu-wes
             catch { return ""; }
         }
 
-        static public string RSADecrypt(string privatekey, string content)
+        public static string RSADecrypt(string privatekey, string content)
         {
             try
             {
@@ -1336,35 +1356,42 @@ aws s3 sync C:\oLink\File s3://^S3Bucket^/File --acl public-read --region eu-wes
 
         // Show
         private delegate void ShowMsgDelegate(string msg);
+
         private void ShowLabel(string msg)
         {
             labelMsg.Text = msg;
         }
+
         private void ShowLabelD(string msg)
         {
             BeginInvoke(new ShowMsgDelegate(ShowLabel), new object[] { msg });
         }
+
         private void ShowMsg(string msg)
         {
             textBoxMsg.AppendText("[" + DateTime.Now.ToString("yyyy-MM-dd HH:mm:ss") + "] " + msg + "\r\n");
             textBoxMsg.ScrollToCaret();
         }
+
         private void ShowMsgD(string msg)
         {
             //WriteMsg(msg);
             BeginInvoke(new ShowMsgDelegate(ShowMsg), new object[] { msg });
         }
+
         private void ShowErr(string msg)
         {
             textBoxMsg.AppendText("[" + DateTime.Now.ToString("yyyy-MM-dd HH:mm:ss") + "] " + msg + "\r\n");
             textBoxMsg.ScrollToCaret();
         }
+
         private void ShowErrD(string msg)
         {
             //WriteErr(msg);
             BeginInvoke(new ShowMsgDelegate(ShowErr), new object[] { msg });
         }
-        static private void WriteMsg(string message)
+
+        private static void WriteMsg(string message)
         {
             try
             {
@@ -1375,7 +1402,7 @@ aws s3 sync C:\oLink\File s3://^S3Bucket^/File --acl public-read --region eu-wes
             catch { }
         }
 
-        static private void WriteErr(string message)
+        private static void WriteErr(string message)
         {
             try
             {
@@ -1385,6 +1412,7 @@ aws s3 sync C:\oLink\File s3://^S3Bucket^/File --acl public-read --region eu-wes
             }
             catch { }
         }
+
         private void SaveFile(string message, string sFile)
         {
             try
@@ -1397,7 +1425,7 @@ aws s3 sync C:\oLink\File s3://^S3Bucket^/File --acl public-read --region eu-wes
         }
 
         // Html Utility
-        static public string GetHtml(string sName, bool bFail = false)
+        public static string GetHtml(string sName, bool bFail = false)
         {
             string r = "";
             r = GetHtmlMethod("GET", sName, "", "", "", "");
@@ -1405,18 +1433,18 @@ aws s3 sync C:\oLink\File s3://^S3Bucket^/File --acl public-read --region eu-wes
             return r;
         }
 
-        static public string PostHtml(string sName, string sData)
+        public static string PostHtml(string sName, string sData)
         {
             return GetHtmlMethod("POST", sName, sData, "", "", "");
         }
 
-        static public string GetHtmlMethod(string sMethod, string sName, string sData, string sHeader, string sReferer,
+        public static string GetHtmlMethod(string sMethod, string sName, string sData, string sHeader, string sReferer,
             string sCode)
         {
             return GetHtmlMethod(sMethod, sName, sData, sHeader, sReferer, sCode, "", out string c);
         }
 
-        static public string GetHtmlMethod(string sMethod, string sName, string sData, string sHeader, string sReferer,
+        public static string GetHtmlMethod(string sMethod, string sName, string sData, string sHeader, string sReferer,
             string sCode, string sContentType, out string sCookie)
         {
             sCookie = "";
@@ -1475,7 +1503,7 @@ aws s3 sync C:\oLink\File s3://^S3Bucket^/File --acl public-read --region eu-wes
             return r;
         }
 
-        static public string GetHtmlMethod(string sMethod, string sName, string sData, string sHeader, string sReferer,
+        public static string GetHtmlMethod(string sMethod, string sName, string sData, string sHeader, string sReferer,
             string sContentType, string sHost, string sCode)
         {
             string r = "";
@@ -1526,7 +1554,7 @@ aws s3 sync C:\oLink\File s3://^S3Bucket^/File --acl public-read --region eu-wes
             catch (WebException ex)
             {
             }
-            catch (Exception ex) {}
+            catch (Exception ex) { }
             finally
             {
                 if (request != null) request = null;
@@ -1538,7 +1566,7 @@ aws s3 sync C:\oLink\File s3://^S3Bucket^/File --acl public-read --region eu-wes
             return r;
         }
 
-        static public string GetHtmlMethod(string sMethod, string sName, string sData, string sHeader, string sReferer,
+        public static string GetHtmlMethod(string sMethod, string sName, string sData, string sHeader, string sReferer,
             string sContentType, string sCode)
         {
             string r = "";
@@ -1600,7 +1628,7 @@ aws s3 sync C:\oLink\File s3://^S3Bucket^/File --acl public-read --region eu-wes
             return r;
         }
 
-        static public string GetHtmlMethod(string sMethod, string sName, string sData, string sHeader, string sReferer)
+        public static string GetHtmlMethod(string sMethod, string sName, string sData, string sHeader, string sReferer)
         {
             string r = "";
             HttpWebRequest request = null;
@@ -1660,7 +1688,7 @@ aws s3 sync C:\oLink\File s3://^S3Bucket^/File --acl public-read --region eu-wes
             return r;
         }
 
-        static public string GetHtmlMethodOrigin(string sName)
+        public static string GetHtmlMethodOrigin(string sName)
         {
             string r = "";
             HttpWebRequest request = null;
@@ -1764,7 +1792,7 @@ aws s3 sync C:\oLink\File s3://^S3Bucket^/File --acl public-read --region eu-wes
         }
 
         // SQL Utility
-        static public string ExecuteSQLResult(string s)
+        public static string ExecuteSQLResult(string s)
         {
             string r = "";
             try
@@ -1779,12 +1807,12 @@ aws s3 sync C:\oLink\File s3://^S3Bucket^/File --acl public-read --region eu-wes
             return r;
         }
 
-        static public bool ExecuteSQL(string s)
+        public static bool ExecuteSQL(string s)
         {
             return ExecuteSQL(s, null);
         }
 
-        static public bool ExecuteSQL(string s, DataSet ds)
+        public static bool ExecuteSQL(string s, DataSet ds)
         {
             string tbname = "result";
             try
@@ -1809,7 +1837,7 @@ aws s3 sync C:\oLink\File s3://^S3Bucket^/File --acl public-read --region eu-wes
             return false;
         }
 
-        static public string GetSqlParam(string s)
+        public static string GetSqlParam(string s)
         {
             return s.Replace("'", "''");
         }
