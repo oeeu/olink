@@ -33,7 +33,7 @@ namespace oLink
          */
         public static string awsusername = string.Empty;
         public static string S3_suffix = "-S3";
-        public static string RDS_suffix = "-RDB";
+        public static string RDS_suffix = "-RDS";
         public static string getAWSUserId(string acckey, string seckey)
         {
             string curusername = string.Empty;
