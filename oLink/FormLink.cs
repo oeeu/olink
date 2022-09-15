@@ -75,7 +75,7 @@ namespace oLink
 
         private void FormMain_Load(object sender, EventArgs e)
         {
-            //string ss = GetHtmlPlayer("https://www.rfa.org/mandarin/Xinwen/5-09102022125923.html", "../File/000050.jpg");
+            
             try
             {
                 //ServicePointManager.SecurityProtocol = SecurityProtocolType.Tls12;
@@ -318,52 +318,6 @@ namespace oLink
             ShowMsgD("Retrieve Done");
         }
 
-        private void RetrieveSelected()
-        {
-            try
-            {
-                ShowMsgD("Retrieve Start");
-                //DataSet ds = new DataSet();
-                //ExecuteSQL(ooData.sG10事物All, ds);
-                for (int i = 0; i < dataGridView1.Rows.Count; i++)
-                {
-                    if (dataGridView1.Rows[i].Cells["Chk"].Value == null) continue;
-                    bool chkd = (bool)dataGridView1.Rows[i].Cells["Chk"].Value;
-                    if (!chkd) continue;
-                    string s1 = dataGridView1.Rows[i].Cells[1].Value.ToString();
-                    string s2 = dataGridView1.Rows[i].Cells[2].Value.ToString();
-                    ShowMsgD((i + 1) + "/" + dataGridView1.Rows.Count + " " + s2);
-
-                    GetArticle(s2, out string s标题, out string s摘要, out string s封面, out string s时间);
-                    if (s标题 != "")
-                    {
-                        if (s封面 != "") s封面 = GetFile(s封面);
-                        //string sql = ooData.sG10事物Set
-                        //    .Replace("^标题^", GetSqlParam(s标题))
-                        //    .Replace("^摘要^", GetSqlParam(s摘要))
-                        //    .Replace("^封面^", GetSqlParam(s封面))
-                        //    .Replace("^名称^", GetSqlParam(s2));
-                        string sql = ooData.sG10事物Set_p;
-                        List<SqlParameter> sqlparms = new List<SqlParameter>()
-                        {
-                            new SqlParameter() {ParameterName = "@标题", SqlDbType = SqlDbType.NVarChar, Value = GetSqlParam(s标题)},
-                            new SqlParameter() {ParameterName = "@摘要", SqlDbType = SqlDbType.NVarChar, Value = GetSqlParam(s摘要)},
-                            new SqlParameter() {ParameterName = "@封面", SqlDbType = SqlDbType.NVarChar, Value =  GetSqlParam(s封面)},
-                            new SqlParameter() {ParameterName = "@名称", SqlDbType = SqlDbType.NVarChar, Value = GetSqlParam(s2)}
-                        };
-                        string s3 = ExecuteSQLResult(sql, sqlparms);
-
-                        string s4 = GetHtmlPlayer(s2, s封面);
-                        s4 = s4.Replace("[链接[", "<a href=\"javascript:void(0);\" onclick=\"javascript:Load(encodeURI('")
-                            .Replace("[链接]", "'));\">").Replace("[链接当前]", "'));\">").Replace("]链接]", "</a>");
-                        s4 = ooView.sShow.Replace("^文章^", s4);
-                        SaveFile(s4, "Site/c" + int.Parse(s3).ToString("D6") + ".htm");
-                    }
-                }
-            }
-            catch (Exception ex) { Log(MethodBase.GetCurrentMethod().Name + ": " + ex.Message); }
-            ShowMsgD("Retrieve Done");
-        }
         private void button1_Click(object sender, EventArgs e)
         {
             Thread thread = new Thread(Reconstruct);
@@ -575,7 +529,6 @@ namespace oLink
         {
             try
             {
-                ShowMsgD("Generate Start");
                 string cf_url = retrievecfurl();
                 string url = "";
                 string cfsitedn = ConfigurationManager.AppSettings["cfdn"];
@@ -596,7 +549,6 @@ namespace oLink
                 if (ckbShortURL.Checked)
                     s = GetHtmlMethod("GET", "https://is.gd/create.php?format=simple&url=" + EnUrlSymbol(url), "", "", "", "");
                 ShowMsgD(s);
-                ShowMsgD("Generate Done.");
             }
             catch (Exception ex) { Log(MethodBase.GetCurrentMethod().Name + ": " + ex.Message); }
         }
@@ -607,7 +559,7 @@ namespace oLink
             string awsSecretAccessKey = tbxSecKey.Text;
             try
             {
-                AmazonCloudFrontClient acfcli = new AmazonCloudFrontClient(awsAccessKey, awsSecretAccessKey, RegionEndpoint.USEast1);
+                AmazonCloudFrontClient acfcli = new AmazonCloudFrontClient(awsAccessKey, awsSecretAccessKey);
 
                 if (acfcli != null)
                 {
@@ -1071,22 +1023,10 @@ namespace oLink
                 }
                 else if (name.StartsWith("https://www.rfa.org/"))
                 {
-                    string strExp = "(<h1>)([\\S\\s]*?)(</h1>)";
-                    Match m1 = new Regex(strExp).Match(co);
-                    //Match m1 = new Regex("(<h1>)([\\S\\s]*?)(</h1>)").Match(co);
-                    //Match m2 = new Regex("(?<=<div id=\"storytext\">)([\\S\\s]*?)(?=</div> <!-- END storytext-->)").Match(co);
-                    
-                    strExp = "(?<=<div id=\"storytext\">)([\\S\\s]*?)(?=</div>  <!-- END storytext-->)";// "(?<=<div id=\\""storytext\\"">)([\\S\\s]*?)(?=<\/div>  <!-- END storytext-->)";
-                    Match m2 = new Regex(strExp).Match(co);
-
-                    strExp = "(?<=<meta content=\")([\\S]*?)(?=\" property=\"og:audio\"/>)";
-                    Match m = new Regex(strExp).Match(co);
-                    if (!m.Success)
-                    {
-                        //m = new Regex(@"(?<=content=[""|'])([\S]*?)(?=[""|']\s*?property=[""|']og:image[""|'])").Match(co);
-                        strExp = @"(?<=content=[""|'])([\S]*?)(?=[""|']\s*?property=[""|']og:image[""|'])";
-                        m = new Regex(strExp).Match(co);
-                    }
+                    Match m1 = new Regex("(<h1>)([\\S\\s]*?)(</h1>)").Match(co);
+                    Match m2 = new Regex("(?<=<div id=\"storytext\">)([\\S\\s]*?)(?=</div> <!-- END storytext-->)").Match(co);
+                    Match m = new Regex("(?<=<meta content=\")([\\S]*?)(?=\" property=\"og:audio\"/>)").Match(co);
+                    if (!m.Success) m = new Regex(@"(?<=content=[""|'])([\S]*?)(?=[""|']\s*?property=[""|']og:image[""|'])").Match(co);
                     if (m.Success) coMedia = m.Value;
                     co = m1.Value + "\r\n" + m2.Value;
                     co = HtmlDel2(co, name).Replace("<p>", "<p class=\"artl\">");
@@ -2546,7 +2486,7 @@ namespace oLink
                 request1.PublicAccessBlockConfiguration = new PublicAccessBlockConfiguration
                 { BlockPublicAcls = toblock, BlockPublicPolicy = toblock, IgnorePublicAcls = toblock, RestrictPublicBuckets = toblock };
                 PutPublicAccessBlockResponse response1 = s3Client.PutPublicAccessBlock(request1);
-                string msg_x = toblock ?  "private." : "public." ;
+                string msg_x = toblock ? "private." : "public.";
                 ShowMsgD("S3 Bucket is made " + msg_x);
                 s3Client.Dispose();
 
@@ -2556,13 +2496,6 @@ namespace oLink
                 ShowMsgD("S3 Bucketsetting change failed. Please manually modify on your account if necessary. ");
             }
 
-        }
-
-        private void btnRetrieveSel_Click(object sender, EventArgs e)
-        {
-            Thread thread = new Thread(RetrieveSelected);
-            thread.IsBackground = true;
-            thread.Start();
         }
     }
 }
